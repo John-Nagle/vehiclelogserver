@@ -28,9 +28,9 @@ type slvector struct {
 
 func (v slvector) String() string {
 	return fmt.Sprintf("(%f,%f,%f)", v.x, v.y, v.z)
-}
+}    
 
-type slregion struct {
+type slregion struct {                          // region corners, always integer meters
 	name string
 	x    int32
 	y    int32
@@ -122,14 +122,7 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 	return ev, err
 }
 
-func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
-	s, err := Constructinsert(hdr, ev)
-	if err != nil {
-		return (err)
-	}
-	fmt.Printf("SQL insert: %s\n", s) // ***TEMP***
-	return nil
-}
+
 
 func Getauthtokenkey(name string, database *sql.DB) ([]byte, error) {
 	return []byte(""), nil // ***TEMP*** need table of authtokens
@@ -152,9 +145,24 @@ func Validateauthtoken(s []byte, name string, value string, database *sql.DB) er
 	return (nil)
 }
 
-func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
-	var stmt string = ""
-	return stmt, nil
+func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
+	var insstmt string = "INSERT INTO events  (time, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval)  VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)"
+	var args [13]interface{}                // args go here
+	args[0] = ev.Timestamp
+	args[1] = hdr.Owner_name
+	args[2] = hdr.Object_name
+	args[3] = hdr.Region.name
+	args[4] = hdr.Region.x
+	args[5] = hdr.Region.y
+	args[6] = hdr.Local_position.x
+	args[7] = hdr.Local_position.y
+	args[8] = ev.Tripid
+	args[9] = ev.Severity
+	args[10] = ev.Eventtype
+	args[11] = ev.Msg
+	args[12] = ev.Auxval
+	_, err := db.Exec(insstmt, args)
+	return err
 }
 
 //

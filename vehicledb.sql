@@ -16,8 +16,10 @@ CREATE TABLE IF NOT EXISTS events (
 	owner_name      VARCHAR(255) NOT NULL,      -- name of owner
 	object_name     VARCHAR(255) NOT NULL,      -- object name
 	region_name     VARCHAR(255) NOT NULL,      -- name of region
-	region_corner   POINT NOT NULL,	            -- corner of region
-	local_position  POINT NOT NULL,             -- X and Y only
+	region_corner_x   INT NOT NULL,	            -- corner of region
+	region_corner_Y   INT NOT NULL,	            -- corner of region
+	local_position_x  FLOAT NOT NULL,           -- X and Y only
+	local_position_y  FLOAT NOT NULL,           -- X and Y only
 	tripid          CHAR(40) NOT NULL,          -- trip ID (random unique identifier)
 	severity        TINYINT NOT NULL,           -- an enum, really
 	eventtype       VARCHAR(20) NOT NULL,       -- STARTUP, SHUTDOWN, etc.
