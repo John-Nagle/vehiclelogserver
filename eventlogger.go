@@ -75,6 +75,22 @@ type vehlogevent struct {
 	Auxval    float32 // some other value associated with the event
 }
 
+//  Configuration info, from file
+type vdbconfig struct {
+    mysql struct {
+        database string                 // for MySQL database
+        user string
+        password string
+        }
+    authkey map[string]string           // auth keys
+}
+////var config vdbconfig;                   // local config, initialized once at startup
+
+
+func initconfig() error {
+    return nil; // ***MORE***
+}
+
 func (r vehlogevent) String() string {
 	return fmt.Sprintf("timestamp: %d  tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f",
 		r.Timestamp, r.Tripid, r.Severity, r.Eventtype, r.Msg, r.Auxval)
