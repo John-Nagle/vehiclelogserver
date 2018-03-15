@@ -7,8 +7,8 @@
 package vehiclelogserver
 
 import (
-	////	"fmt"
 	"database/sql"
+	"fmt"
 	"net/http"
 	////import "github.com/go-sql-driver/mysql"
 )
@@ -71,7 +71,17 @@ func Parsevehevent(s string) (vehlogevent, error) {
 }
 
 func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
+	s, err := Constructinsert(hdr, ev)
+	if err != nil {
+		return (err)
+	}
+	fmt.Printf("SQL insert: %s\n", s) // ***TEMP***
 	return nil
+}
+
+func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
+	var stmt string = ""
+	return stmt, nil
 }
 
 //

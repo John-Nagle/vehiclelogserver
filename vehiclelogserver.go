@@ -27,14 +27,14 @@ func (s FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte(k))
 		w.Write([]byte("="))
 		for i := range v {
-		    w.Write([]byte(v[i]))
-		    w.Write([]byte(" "))
-		    }
+			w.Write([]byte(v[i]))
+			w.Write([]byte(" "))
+		}
 		w.Write([]byte("\n"))
 	}
 	if req.Body != nil {
 		w.Write([]byte("Body: "))
-		body := make([]byte, 1000)  // buffer for body
+		body := make([]byte, 1000) // buffer for body
 		len, _ := req.Body.Read(body)
 		w.Write(body[0:len])
 		w.Write([]byte("\n"))
