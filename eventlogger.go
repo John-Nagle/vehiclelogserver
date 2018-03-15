@@ -8,10 +8,10 @@ package vehiclelogserver
 
 import (
 	"database/sql"
-	"fmt"
-	"strings"
-	"net/http"
 	"errors"
+	"fmt"
+	"net/http"
+	"strings"
 	////import "github.com/go-sql-driver/mysql"
 )
 
@@ -24,10 +24,18 @@ type slvector struct {
 	z float32
 }
 
+func (v slvector) String() string {
+	return fmt.Sprintf("(%f,%f,%f)", v.x, v.y, v.z)
+}
+
 type slregion struct {
 	name string
 	x    int32
 	y    int32
+}
+
+func (r slregion) String() string {
+	return fmt.Sprintf("%s (%d,%d)", r.name, r.x, r.y)
 }
 
 //  Typical header data from SL servers
@@ -46,10 +54,14 @@ type slregion struct {
 //  "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
 
 type slheader struct {
-	owner_name      string   // name of owner
-	object_name     string   // object name
-	region          slregion // SL region name and corner
-	local_position  slvector // position within region
+	owner_name     string   // name of owner
+	object_name    string   // object name
+	region         slregion // SL region name and corner
+	local_position slvector // position within region
+}
+
+func (r slheader) String() string {
+	return fmt.Sprintf("owner_name: \"%s\"  object_name: \"%s\"  region: %s  local_position: %s", r.owner_name, r.object_name, r.region, r.local_position)
 }
 
 type vehlogevent struct {
@@ -62,35 +74,37 @@ type vehlogevent struct {
 
 //  Parseslregion - parse forms such as "Vallone (462592, 306944)"
 func Parseslregion(s string) (slregion, error) {
-    var reg slregion;
-    ix := strings.LastIndex(s,"(")           // find rightmost paren
-    if ix < 0 {
-        return reg, errors.New("SL region location not in expected format")
-        }
-    reg.name = strings.TrimSpace(s[0:ix-1])                   // name part
-    _, err := fmt.Sscanf(s[ix:],"(%d,%d)",&reg.x, &reg.y)    // location part
-    fmt.Printf("Parseslregion: %s -> \"%s\" (%d,%d)\n", s, reg.name, reg.x, reg.y)   // ***TEMP***   
-    return reg, err
+	var reg slregion
+	ix := strings.LastIndex(s, "(") // find rightmost paren
+	if ix < 0 {
+		return reg, errors.New("SL region location not in expected format")
+	}
+	reg.name = strings.TrimSpace(s[0 : ix-1])               // name part
+	_, err := fmt.Sscanf(s[ix:], "(%d,%d)", &reg.x, &reg.y) // location part
+	return reg, err
 }
 
 //  Parseslvector - parse forms such as "(204.783539, 26.682831, 35.563702)"
 func Parseslvector(s string) (slvector, error) {
-    var p slvector;
-    _, err := fmt.Sscanf(s, "(%f,%f,%f)", &p.x, &p.y, &p.z)
-   fmt.Printf("Parseslvector: %s -> (%f,%f,%f)\n", s, p.x,p.y,p.z)   // ***TEMP***   
-   return p, err
+	var p slvector
+	_, err := fmt.Sscanf(s, "(%f,%f,%f)", &p.x, &p.y, &p.z)
+	return p, err
 }
-
 
 func Parseheader(headervars http.Header) (slheader, error) {
 	var hdr slheader
 	var err error
-	hdr.owner_name = headervars.Get("X-Secondlife-Owner-Name")
-	hdr.object_name = headervars.Get("X-Secondlife-Object-Name")
+	hdr.owner_name = strings.TrimSpace(headervars.Get("X-Secondlife-Owner-Name"))
+	hdr.object_name = strings.TrimSpace(headervars.Get("X-Secondlife-Object-Name"))
 	hdr.region, err = Parseslregion(headervars.Get("X-Secondlife-Region"))
-	if err != nil { return hdr, err }
+	if err != nil {
+		return hdr, err
+	}
 	hdr.local_position, err = Parseslvector(headervars.Get("X-Secondlife-Local-Position"))
-	if err != nil { return hdr, err }
+	if err != nil {
+		return hdr, err
+	}
+	fmt.Printf("Parseheader: %s\n", hdr) // ***TEMP***
 	return hdr, nil
 }
 
@@ -108,18 +122,20 @@ func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
 	return nil
 }
 
-func Getauthtokenkey(name string, database *sql.DB)(string, error) {
-    return "",nil   // ***TEMP***    
+func Getauthtokenkey(name string, database *sql.DB) (string, error) {
+	return "", nil // ***TEMP***
 }
 
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
-func Validateauthtoken(s string, name string, value string, database *sql.DB)(error) {
-    _, err := Getauthtokenkey(name, database)
-    if err != nil { return(err) }
-    //  ***MORE*** do SHA1 check
-    return(nil)
+func Validateauthtoken(s string, name string, value string, database *sql.DB) error {
+	_, err := Getauthtokenkey(name, database)
+	if err != nil {
+		return (err)
+	}
+	//  ***MORE*** do SHA1 check
+	return (nil)
 }
 
 func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
@@ -131,8 +147,10 @@ func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
 //  Addevent -- add an event to the database
 //
 func Addevent(s string, headervars http.Header, database *sql.DB) error {
-    //  Validate auth token first
-    err := Validateauthtoken(s, headervars.Get("Authtoken-Name"), headervars.Get("Authtoken-Value"), database)
+	//  Validate auth token first
+	err := Validateauthtoken(s,
+		strings.TrimSpace(headervars.Get("Authtoken-Name")),
+		strings.TrimSpace(headervars.Get("Authtoken-Value")), database)
 	if err != nil {
 		return (err)
 	}
