@@ -38,6 +38,8 @@ var testheader1 = http.Header {
 "Accept-Charset" : {"utf-8;q=1.0, *;q=0.5"}}
 
 var testjson1 = "{\"event\":\"Touched\",\"driver\":\"animats Resident\",\"drivername\":\"Joe Magarac\"}"
+// logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
+var testjson2 = "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
 
 
 func TestConfigRead(t *testing.T) {
