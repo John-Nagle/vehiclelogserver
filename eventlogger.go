@@ -9,7 +9,9 @@ package vehiclelogserver
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"net/http"
+	"errors"
 	////import "github.com/go-sql-driver/mysql"
 )
 
@@ -58,14 +60,25 @@ type vehlogevent struct {
 	auxval    float32 // some other value associated with the event
 }
 
+//  Parseslregion - parse forms such as "Vallone (462592, 306944)"
 func Parseslregion(s string) (slregion, error) {
     var reg slregion;
-    return reg, nil
+    ix := strings.LastIndex(s,"(")           // find rightmost paren
+    if ix < 0 {
+        return reg, errors.New("SL region location not in expected format")
+        }
+    reg.name = strings.TrimSpace(s[0:ix-1])                   // name part
+    _, err := fmt.Sscanf(s[ix:],"(%d,%d)",&reg.x, &reg.y)    // location part
+    fmt.Printf("Parseslregion: %s -> \"%s\" (%d,%d)\n", s, reg.name, reg.x, reg.y)   // ***TEMP***   
+    return reg, err
 }
 
+//  Parseslvector - parse forms such as "(204.783539, 26.682831, 35.563702)"
 func Parseslvector(s string) (slvector, error) {
-    var v slvector;
-    return v, nil
+    var p slvector;
+    _, err := fmt.Sscanf(s, "(%f,%f,%f)", &p.x, &p.y, &p.z)
+   fmt.Printf("Parseslvector: %s -> (%f,%f,%f)\n", s, p.x,p.y,p.z)   // ***TEMP***   
+   return p, err
 }
 
 
