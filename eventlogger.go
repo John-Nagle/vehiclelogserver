@@ -7,12 +7,13 @@
 package vehiclelogserver
 
 import (
+	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
-	"encoding/json"
 	////import "github.com/go-sql-driver/mysql"
 )
 
@@ -66,7 +67,7 @@ func (r slheader) String() string {
 }
 
 type vehlogevent struct {
-    Timestamp int64   // UNIX timestamp, long form
+	Timestamp int64   // UNIX timestamp, long form
 	Tripid    string  // trip ID (random unique identifier)
 	Severity  int8    // an enum, really
 	Eventtype string  // STARTUP, SHUTDOWN, etc.
@@ -75,8 +76,8 @@ type vehlogevent struct {
 }
 
 func (r vehlogevent) String() string {
-	return fmt.Sprintf("timestamp: %d  tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f", 
-	    r.Timestamp, r.Tripid, r.Severity, r.Eventtype, r.Msg, r.Auxval)
+	return fmt.Sprintf("timestamp: %d  tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f",
+		r.Timestamp, r.Tripid, r.Severity, r.Eventtype, r.Msg, r.Auxval)
 }
 
 //  Parseslregion - parse forms such as "Vallone (462592, 306944)"
@@ -117,9 +118,7 @@ func Parseheader(headervars http.Header) (slheader, error) {
 
 func Parsevehevent(s []byte) (vehlogevent, error) {
 	var ev vehlogevent
-	err := json.Unmarshal(s, &ev);      // decode JSON
-	fmt.Printf("Parsevehevent: %s ->  %s \n", string(s), ev);    // ***TEMP***
-	if (err != nil) { fmt.Printf("JSON decode error: %s\n", err.Error()) }
+	err := json.Unmarshal(s, &ev) // decode JSON
 	return ev, err
 }
 
@@ -132,19 +131,24 @@ func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
 	return nil
 }
 
-func Getauthtokenkey(name string, database *sql.DB) (string, error) {
-	return "", nil // ***TEMP***
+func Getauthtokenkey(name string, database *sql.DB) ([]byte, error) {
+	return []byte(""), nil // ***TEMP*** need table of authtokens
 }
 
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
 func Validateauthtoken(s []byte, name string, value string, database *sql.DB) error {
-	_, err := Getauthtokenkey(name, database)
+	token, err := Getauthtokenkey(name, database)
 	if err != nil {
 		return (err)
 	}
-	//  ***MORE*** do SHA1 check
+	//  Do SHA1 check to validate that log entry is valid.
+	valforhash := append(token, s...)
+	hash := sha1.Sum(valforhash) // validate that SHA1 of token plus string matches
+	if string(hash[:]) != value {
+		return errors.New(fmt.Sprintf("Logging authorization token %s failed to validate.", name))
+	}
 	return (nil)
 }
 
