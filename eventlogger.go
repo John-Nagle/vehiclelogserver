@@ -55,27 +55,28 @@ func (r slregion) String() string {
 //  "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
 
 type slheader struct {
-	owner_name     string   // name of owner
-	object_name    string   // object name
-	region         slregion // SL region name and corner
-	local_position slvector // position within region
+	Owner_name     string   // name of owner
+	Object_name    string   // object name
+	Region         slregion // SL region name and corner
+	Local_position slvector // position within region
 }
 
 func (r slheader) String() string {
-	return fmt.Sprintf("owner_name: \"%s\"  object_name: \"%s\"  region: %s  local_position: %s", r.owner_name, r.object_name, r.region, r.local_position)
+	return fmt.Sprintf("owner_name: \"%s\"  object_name: \"%s\"  region: %s  local_position: %s", r.Owner_name, r.Object_name, r.Region, r.Local_position)
 }
 
 type vehlogevent struct {
-	tripid    string  // trip ID (random unique identifier)
-	severity  int8    // an enum, really
-	eventtype string  // STARTUP, SHUTDOWN, etc.
-	msg       string  // human-readable message
-	auxval    float32 // some other value associated with the event
+    Timestamp int64   // UNIX timestamp, long form
+	Tripid    string  // trip ID (random unique identifier)
+	Severity  int8    // an enum, really
+	Eventtype string  // STARTUP, SHUTDOWN, etc.
+	Msg       string  // human-readable message
+	Auxval    float32 // some other value associated with the event
 }
 
 func (r vehlogevent) String() string {
-	return fmt.Sprintf("tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f", 
-	    r.tripid, r.severity, r.eventtype, r.msg, r.auxval)
+	return fmt.Sprintf("timestamp: %d  tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f", 
+	    r.Timestamp, r.Tripid, r.Severity, r.Eventtype, r.Msg, r.Auxval)
 }
 
 //  Parseslregion - parse forms such as "Vallone (462592, 306944)"
@@ -100,13 +101,13 @@ func Parseslvector(s string) (slvector, error) {
 func Parseheader(headervars http.Header) (slheader, error) {
 	var hdr slheader
 	var err error
-	hdr.owner_name = strings.TrimSpace(headervars.Get("X-Secondlife-Owner-Name"))
-	hdr.object_name = strings.TrimSpace(headervars.Get("X-Secondlife-Object-Name"))
-	hdr.region, err = Parseslregion(headervars.Get("X-Secondlife-Region"))
+	hdr.Owner_name = strings.TrimSpace(headervars.Get("X-Secondlife-Owner-Name"))
+	hdr.Object_name = strings.TrimSpace(headervars.Get("X-Secondlife-Object-Name"))
+	hdr.Region, err = Parseslregion(headervars.Get("X-Secondlife-Region"))
 	if err != nil {
 		return hdr, err
 	}
-	hdr.local_position, err = Parseslvector(headervars.Get("X-Secondlife-Local-Position"))
+	hdr.Local_position, err = Parseslvector(headervars.Get("X-Secondlife-Local-Position"))
 	if err != nil {
 		return hdr, err
 	}
@@ -117,7 +118,8 @@ func Parseheader(headervars http.Header) (slheader, error) {
 func Parsevehevent(s []byte) (vehlogevent, error) {
 	var ev vehlogevent
 	err := json.Unmarshal(s, &ev);      // decode JSON
-	fmt.Printf("Parsevehevent: %s ->  %s (Error: %s)\n", string(s), ev, err);    // ***TEMP***
+	fmt.Printf("Parsevehevent: %s ->  %s \n", string(s), ev);    // ***TEMP***
+	if (err != nil) { fmt.Printf("JSON decode error: %s\n", err.Error()) }
 	return ev, err
 }
 
