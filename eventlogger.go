@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"encoding/json"
 	////import "github.com/go-sql-driver/mysql"
 )
 
@@ -72,6 +73,11 @@ type vehlogevent struct {
 	auxval    float32 // some other value associated with the event
 }
 
+func (r vehlogevent) String() string {
+	return fmt.Sprintf("tripid: \"%s\"  severity: %d  eventtype: %s  msg: %s  auxval: %f", 
+	    r.tripid, r.severity, r.eventtype, r.msg, r.auxval)
+}
+
 //  Parseslregion - parse forms such as "Vallone (462592, 306944)"
 func Parseslregion(s string) (slregion, error) {
 	var reg slregion
@@ -108,9 +114,11 @@ func Parseheader(headervars http.Header) (slheader, error) {
 	return hdr, nil
 }
 
-func Parsevehevent(s string) (vehlogevent, error) {
+func Parsevehevent(s []byte) (vehlogevent, error) {
 	var ev vehlogevent
-	return ev, nil
+	err := json.Unmarshal(s, &ev);      // decode JSON
+	fmt.Printf("Parsevehevent: %s ->  %s (Error: %s)\n", string(s), ev, err);    // ***TEMP***
+	return ev, err
 }
 
 func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
@@ -129,7 +137,7 @@ func Getauthtokenkey(name string, database *sql.DB) (string, error) {
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
-func Validateauthtoken(s string, name string, value string, database *sql.DB) error {
+func Validateauthtoken(s []byte, name string, value string, database *sql.DB) error {
 	_, err := Getauthtokenkey(name, database)
 	if err != nil {
 		return (err)
@@ -146,7 +154,7 @@ func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
 //
 //  Addevent -- add an event to the database
 //
-func Addevent(s string, headervars http.Header, database *sql.DB) error {
+func Addevent(s []byte, headervars http.Header, database *sql.DB) error {
 	//  Validate auth token first
 	err := Validateauthtoken(s,
 		strings.TrimSpace(headervars.Get("Authtoken-Name")),

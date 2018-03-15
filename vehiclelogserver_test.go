@@ -37,10 +37,10 @@ var testheader1 = http.Header{
 	"Cache-Control":  {"max-age=259200"},
 	"Accept-Charset": {"utf-8;q=1.0, *;q=0.5"}}
 
-var testjson1 = "{\"event\":\"Touched\",\"driver\":\"animats Resident\",\"drivername\":\"Joe Magarac\"}"
+var testjson0 = "{\"event\":\"Touched\",\"driver\":\"animats Resident\",\"drivername\":\"Joe Magarac\"}"
 
 // logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
-var testjson2 = "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
+var testjson1 = "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
 
 func TestConfigRead(t *testing.T) {
 	t.Errorf("Unimplemented")
@@ -52,7 +52,7 @@ func TestDatabaseConnection(t *testing.T) {
 
 func TestEventLog(t *testing.T) {
 	//  Basic parsing test
-	err := Addevent(testjson1, testheader1, nil) // call with no database
+	err := Addevent([]byte(testjson1), testheader1, nil) // call with no database
 	if err != nil {
 		t.Errorf(err.Error())
 	}
