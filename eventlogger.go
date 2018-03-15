@@ -44,10 +44,8 @@ type slregion struct {
 //  "{\"tripid\":\"ABCDEF\",\"severity\":2,\"type\":\"STARTUP\",\"msg\":\"John Doe\",\"auxval\":1.0}"
 
 type slheader struct {
-	authtoken_name  string   // name of auth token
-	authtoken_value string   // value of auth token
 	owner_name      string   // name of owner
-	object_key      string   // object key
+	object_name     string   // object name
 	region          slregion // SL region name and corner
 	local_position  slvector // position within region
 }
@@ -60,8 +58,26 @@ type vehlogevent struct {
 	auxval    float32 // some other value associated with the event
 }
 
+func Parseslregion(s string) (slregion, error) {
+    var reg slregion;
+    return reg, nil
+}
+
+func Parseslvector(s string) (slvector, error) {
+    var v slvector;
+    return v, nil
+}
+
+
 func Parseheader(headervars http.Header) (slheader, error) {
 	var hdr slheader
+	var err error
+	hdr.owner_name = headervars.Get("X-Secondlife-Owner-Name")
+	hdr.object_name = headervars.Get("X-Secondlife-Object-Name")
+	hdr.region, err = Parseslregion(headervars.Get("X-Secondlife-Region"))
+	if err != nil { return hdr, err }
+	hdr.local_position, err = Parseslvector(headervars.Get("X-Secondlife-Local-Position"))
+	if err != nil { return hdr, err }
 	return hdr, nil
 }
 
@@ -79,6 +95,20 @@ func Insertindb(database *sql.DB, hdr slheader, ev vehlogevent) error {
 	return nil
 }
 
+func Getauthtokenkey(name string, database *sql.DB)(string, error) {
+    return "",nil   // ***TEMP***    
+}
+
+//
+//  Validateauthtoken -- validate that string has correct hash for auth token
+//
+func Validateauthtoken(s string, name string, value string, database *sql.DB)(error) {
+    _, err := Getauthtokenkey(name, database)
+    if err != nil { return(err) }
+    //  ***MORE*** do SHA1 check
+    return(nil)
+}
+
 func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
 	var stmt string = ""
 	return stmt, nil
@@ -88,6 +118,11 @@ func Constructinsert(hdr slheader, ev vehlogevent) (string, error) {
 //  Addevent -- add an event to the database
 //
 func Addevent(s string, headervars http.Header, database *sql.DB) error {
+    //  Validate auth token first
+    err := Validateauthtoken(s, headervars.Get("Authtoken-Name"), headervars.Get("Authtoken-Value"), database)
+	if err != nil {
+		return (err)
+	}
 	hdr, err := Parseheader(headervars) // parse HTTP header
 	if err != nil {
 		return (err)
