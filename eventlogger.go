@@ -12,7 +12,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os/user"
+	"path/filepath"
 	"strings"
 	////import "github.com/go-sql-driver/mysql"
 )
@@ -28,9 +31,9 @@ type slvector struct {
 
 func (v slvector) String() string {
 	return fmt.Sprintf("(%f,%f,%f)", v.x, v.y, v.z)
-}    
+}
 
-type slregion struct {                          // region corners, always integer meters
+type slregion struct { // region corners, always integer meters
 	name string
 	x    int32
 	y    int32
@@ -77,18 +80,47 @@ type vehlogevent struct {
 
 //  Configuration info, from file
 type vdbconfig struct {
-    mysql struct {
-        database string                 // for MySQL database
-        user string
-        password string
-        }
-    authkey map[string]string           // auth keys
+	Mysql struct {
+		Database string // for MySQL database
+		User     string
+		Password string
+	}
+	Authkey map[string]string // auth keys
 }
+
+func (r vdbconfig) String() string {
+	var s string = ""
+	for k, _ := range r.Authkey { // all the authkey names, but not values
+		s = s + " " + k
+	}
+	return (fmt.Sprintf("database: %s  user: %s authkeys: %s", r.Mysql.Database, r.Mysql.User, s))
+}
+
 ////var config vdbconfig;                   // local config, initialized once at startup
 
+func expand(path string) (string, error) { // expand file paths with tilde for home dir
+	if len(path) == 0 || path[0] != '~' {
+		return path, nil
+	}
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(usr.HomeDir, path[1:]), nil
+}
 
-func initconfig() error {
-    return nil; // ***MORE***
+func initconfig(configpath string) (vdbconfig, error) {
+	var cf vdbconfig                      // congif gets parsed here
+	configpath, err := expand(configpath) // get absolute path
+	file, err := ioutil.ReadFile(configpath)
+	if err != nil {
+		return cf, err
+	}
+	if err != nil {
+		return cf, err
+	}
+	json.Unmarshal(file, &cf)
+	return cf, nil
 }
 
 func (r vehlogevent) String() string {
@@ -138,8 +170,6 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 	return ev, err
 }
 
-
-
 func Getauthtokenkey(name string, database *sql.DB) ([]byte, error) {
 	return []byte(""), nil // ***TEMP*** need table of authtokens
 }
@@ -163,7 +193,7 @@ func Validateauthtoken(s []byte, name string, value string, database *sql.DB) er
 
 func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	var insstmt string = "INSERT INTO events  (time, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval)  VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)"
-	var args [13]interface{}                // args go here
+	var args [13]interface{} // args go here
 	args[0] = ev.Timestamp
 	args[1] = hdr.Owner_name
 	args[2] = hdr.Object_name

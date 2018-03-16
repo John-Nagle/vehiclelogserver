@@ -7,6 +7,7 @@
 package vehiclelogserver
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 	////"database/sql"
@@ -43,7 +44,11 @@ var testjson0 = []byte(`{"event":"Touched","driver":"animats Resident","driverna
 var testjson1 = []byte(`{"tripid":"ABCDEF","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`)
 
 func TestConfigRead(t *testing.T) {
-	t.Errorf("Unimplemented")
+	cf, err := initconfig("~/keys/vehicledbconf.json")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	fmt.Printf("Config: %s\n", cf)
 }
 
 func TestDatabaseConnection(t *testing.T) {
