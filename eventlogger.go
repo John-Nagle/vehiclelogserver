@@ -17,7 +17,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-	////import "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 //
 //  Package-local types
@@ -182,7 +182,6 @@ func Validateauthtoken(s []byte, name string, value string) error {
 		return errors.New(fmt.Sprintf("Logging authorization token %s not recognized.", name))
 	}
 	//  Do SHA1 check to validate that log entry is valid.
-	///valforhash := append(token, s...)
 	valforhash := append([]byte(token),s...)
 	hash := sha1.Sum(valforhash) // validate that SHA1 of token plus string matches
 	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash);   // ***TEMP***
