@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS events (
 	eventtype       VARCHAR(20) NOT NULL,       -- STARTUP, SHUTDOWN, etc.
 	msg             TEXT,                       -- human-readable message
 	auxval          FLOAT NOT NULL,             -- some other value associated with the event type
-	UNIQUE INDEX(serial),
 	INDEX(tripid),
+	UNIQUE INDEX(tripid, serial),               -- catch dups at insert time
 	INDEX(eventtype)
 ) ENGINE InnoDB;
