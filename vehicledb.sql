@@ -32,3 +32,14 @@ CREATE TABLE IF NOT EXISTS events (
 	INDEX(eventtype),
 	INDEX(summary)
 ) ENGINE InnoDB;
+--
+--  Errors -- error log
+--
+CREATE TABLE IF NOT EXISTS errorlog (
+    stamp           TIMESTAMP,                  -- automatic timestamp
+    owner_name      VARCHAR(255) DEFAULT NULL,  -- owner if relevant
+    tripid          CHAR(40) DEFAULT NULL,      -- trip ID if relevant
+    msg             TEXT,                       -- error message
+    INDEX(owner_name),
+    INDEX(tripid)
+) ENGINE InnoDB;
