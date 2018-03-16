@@ -19,28 +19,29 @@ import (
 	"strings"
 	////import "github.com/go-sql-driver/mysql"
 )
-
+//
+//  Package-local types
 //
 //  A logging event
 //
 type slvector struct {
-	x float32
-	y float32
-	z float32
+	X float32
+	Y float32
+	Z float32
 }
 
 func (v slvector) String() string {
-	return fmt.Sprintf("(%f,%f,%f)", v.x, v.y, v.z)
+	return fmt.Sprintf("(%f,%f,%f)", v.X, v.Y, v.Z)
 }
 
 type slregion struct { // region corners, always integer meters
-	name string
-	x    int32
-	y    int32
+	Name string
+	X    int32
+	Y    int32
 }
 
 func (r slregion) String() string {
-	return fmt.Sprintf("%s (%d,%d)", r.name, r.x, r.y)
+	return fmt.Sprintf("%s (%d,%d)", r.Name, r.X, r.Y)
 }
 
 //  Typical header data from SL servers
@@ -50,9 +51,9 @@ func (r slregion) String() string {
 //  "X-Secondlife-Owner-Name" : {"animats Resident "},
 //  "X-Secondlife-Object-Key" : {"b23730f8-4105-594a-c359-e72f9fece699"},
 //  "X-Secondlife-Region" : {"Vallone (462592, 306944)"},
-//  "Authtoken-Value" : {"0bc935dbb51aaeaf2ae0e98362d3b7500db36350"},
+//  "X-Authtoken-Value" : {"0bc935dbb51aaeaf2ae0e98362d3b7500db36350"},
 //  "X-Secondlife-Local-Position" : {"(204.783539, 26.682831, 35.563702)"},
-//  "Authtoken-Name" : {"TEST"},
+//  "X-Authtoken-Name" : {"TEST"},
 
 //  Typical JSON from our logger
 //
@@ -81,6 +82,7 @@ type vehlogevent struct {
 //  Configuration info, from file
 type vdbconfig struct {
 	Mysql struct {
+	    Domain   string // domain for MySQL database
 		Database string // for MySQL database
 		User     string
 		Password string
@@ -93,10 +95,12 @@ func (r vdbconfig) String() string {
 	for k, _ := range r.Authkey { // all the authkey names, but not values
 		s = s + " " + k
 	}
-	return (fmt.Sprintf("database: %s  user: %s authkeys: %s", r.Mysql.Database, r.Mysql.User, s))
+	return (fmt.Sprintf("domain: %s  database: %s  user: %s authkeys: %s", r.Mysql.Domain, r.Mysql.Database, r.Mysql.User, s))
 }
-
-////var config vdbconfig;                   // local config, initialized once at startup
+//
+//  Package-local variables
+//
+var config vdbconfig;                   // local config, initialized once at startup
 
 func expand(path string) (string, error) { // expand file paths with tilde for home dir
 	if len(path) == 0 || path[0] != '~' {
@@ -109,18 +113,17 @@ func expand(path string) (string, error) { // expand file paths with tilde for h
 	return filepath.Join(usr.HomeDir, path[1:]), nil
 }
 
-func initconfig(configpath string) (vdbconfig, error) {
-	var cf vdbconfig                      // congif gets parsed here
+func initconfig(configpath string) (error) {
 	configpath, err := expand(configpath) // get absolute path
 	file, err := ioutil.ReadFile(configpath)
 	if err != nil {
-		return cf, err
+		return err
 	}
 	if err != nil {
-		return cf, err
+		return err
 	}
-	json.Unmarshal(file, &cf)
-	return cf, nil
+	err = json.Unmarshal(file, &config)         // config file is json
+	return err
 }
 
 func (r vehlogevent) String() string {
@@ -135,15 +138,15 @@ func Parseslregion(s string) (slregion, error) {
 	if ix < 0 {
 		return reg, errors.New("SL region location not in expected format")
 	}
-	reg.name = strings.TrimSpace(s[0 : ix-1])               // name part
-	_, err := fmt.Sscanf(s[ix:], "(%d,%d)", &reg.x, &reg.y) // location part
+	reg.Name = strings.TrimSpace(s[0 : ix-1])               // name part
+	_, err := fmt.Sscanf(s[ix:], "(%d,%d)", &reg.X, &reg.Y) // location part
 	return reg, err
 }
 
 //  Parseslvector - parse forms such as "(204.783539, 26.682831, 35.563702)"
 func Parseslvector(s string) (slvector, error) {
 	var p slvector
-	_, err := fmt.Sscanf(s, "(%f,%f,%f)", &p.x, &p.y, &p.z)
+	_, err := fmt.Sscanf(s, "(%f,%f,%f)", &p.X, &p.Y, &p.Z)
 	return p, err
 }
 
@@ -170,21 +173,19 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 	return ev, err
 }
 
-func Getauthtokenkey(name string, database *sql.DB) ([]byte, error) {
-	return []byte(""), nil // ***TEMP*** need table of authtokens
-}
-
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
-func Validateauthtoken(s []byte, name string, value string, database *sql.DB) error {
-	token, err := Getauthtokenkey(name, database)
-	if err != nil {
-		return (err)
+func Validateauthtoken(s []byte, name string, value string) error {
+	token := config.Authkey[name]            // get auth token
+	if token == "" {
+		return errors.New(fmt.Sprintf("Logging authorization token %s not recognized.", name))
 	}
 	//  Do SHA1 check to validate that log entry is valid.
-	valforhash := append(token, s...)
+	///valforhash := append(token, s...)
+	valforhash := append([]byte(token),s...)
 	hash := sha1.Sum(valforhash) // validate that SHA1 of token plus string matches
+	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash);   // ***TEMP***
 	if string(hash[:]) != value {
 		return errors.New(fmt.Sprintf("Logging authorization token %s failed to validate.", name))
 	}
@@ -197,11 +198,11 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	args[0] = ev.Timestamp
 	args[1] = hdr.Owner_name
 	args[2] = hdr.Object_name
-	args[3] = hdr.Region.name
-	args[4] = hdr.Region.x
-	args[5] = hdr.Region.y
-	args[6] = hdr.Local_position.x
-	args[7] = hdr.Local_position.y
+	args[3] = hdr.Region.Name
+	args[4] = hdr.Region.X
+	args[5] = hdr.Region.Y
+	args[6] = hdr.Local_position.X
+	args[7] = hdr.Local_position.Y
 	args[8] = ev.Tripid
 	args[9] = ev.Severity
 	args[10] = ev.Eventtype
@@ -217,8 +218,8 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 func Addevent(s []byte, headervars http.Header, database *sql.DB) error {
 	//  Validate auth token first
 	err := Validateauthtoken(s,
-		strings.TrimSpace(headervars.Get("Authtoken-Name")),
-		strings.TrimSpace(headervars.Get("Authtoken-Value")), database)
+		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
+		strings.TrimSpace(headervars.Get("X-Authtoken-Value")))
 	if err != nil {
 		return (err)
 	}
