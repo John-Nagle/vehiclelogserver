@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"testing"
+    "database/sql"
+
 	////"database/sql"
 )
 
@@ -44,6 +46,8 @@ var testjson0 = []byte(`{"event":"Touched","driver":"animats Resident","driverna
 // logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
 var testjson1 = []byte(`{"timestamp":1234,"tripid":"ABCDEF","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`)
 
+var db *sql.DB = nil   // test access t database
+
 func TestConfigRead(t *testing.T) {
     //  Reads the config file into variable "config".
 	err := initconfig("~/keys/vehicledbconf.json")
@@ -54,7 +58,14 @@ func TestConfigRead(t *testing.T) {
 }
 
 func TestDatabaseConnection(t *testing.T) {
-	t.Errorf("Unimplemented")
+    s := fmt.Sprintf("%s:%s@tcp(%s)/%s", 
+        config.Mysql.User, config.Mysql.Password, config.Mysql.Domain,config.Mysql.Database)
+    fmt.Printf("Database open: %s\n",s)
+    var err error
+    db, err     = sql.Open("mysql",s)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestEventLog(t *testing.T) {
@@ -70,7 +81,7 @@ func TestEventLog(t *testing.T) {
 	var hashes []string;
 	hashes = append(hashes, string(hash[:]))
 	testheader1["X-Authtoken-Value"] = hashes
-	err := Addevent(testjson1, testheader1, nil) // call with no database
+	err := Addevent(testjson1, testheader1, db) // call with no database
 	if err != nil {
 		t.Errorf(err.Error())
 	}

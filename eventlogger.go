@@ -4,6 +4,11 @@
 //  Animats
 //  March, 2018
 //
+//
+//  TODO:
+//  - Add JSON fields "echo", "timestamp", and "serial", in client and server. [DONE]
+//  - Add clock skew check for timestamp.
+//
 package vehiclelogserver
 
 import (
@@ -17,7 +22,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 //
 //  Package-local types
@@ -72,11 +77,13 @@ func (r slheader) String() string {
 
 type vehlogevent struct {
 	Timestamp int64   // UNIX timestamp, long form
+	Serial    int32   // serial number from client
 	Tripid    string  // trip ID (random unique identifier)
 	Severity  int8    // an enum, really
 	Eventtype string  // STARTUP, SHUTDOWN, etc.
 	Msg       string  // human-readable message
 	Auxval    float32 // some other value associated with the event
+	echo      bool    // if set, client wants debug echo
 }
 
 //  Configuration info, from file
@@ -192,22 +199,23 @@ func Validateauthtoken(s []byte, name string, value string) error {
 }
 
 func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
-	var insstmt string = "INSERT INTO events  (time, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval)  VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)"
-	var args [13]interface{} // args go here
-	args[0] = ev.Timestamp
-	args[1] = hdr.Owner_name
-	args[2] = hdr.Object_name
-	args[3] = hdr.Region.Name
-	args[4] = hdr.Region.X
-	args[5] = hdr.Region.Y
-	args[6] = hdr.Local_position.X
-	args[7] = hdr.Local_position.Y
-	args[8] = ev.Tripid
-	args[9] = ev.Severity
-	args[10] = ev.Eventtype
-	args[11] = ev.Msg
-	args[12] = ev.Auxval
-	_, err := db.Exec(insstmt, args)
+	var insstmt string = "INSERT INTO events  (time, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_, err := db.Exec(insstmt, 	
+	    ev.Timestamp,
+	    hdr.Owner_name,
+	    hdr.Object_name,
+	    hdr.Region.Name,
+	    hdr.Region.X,
+	    hdr.Region.Y,
+	    hdr.Local_position.X,
+	    hdr.Local_position.Y,
+	    ev.Tripid,
+	    ev.Severity,
+	    ev.Eventtype,
+	    ev.Msg,
+	    ev.Auxval,
+	    ev.Serial)
+
 	return err
 }
 

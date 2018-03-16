@@ -11,8 +11,8 @@ USE vehiclelog;
 --  Events -- raw events sent from vehicle script
 --
 CREATE TABLE IF NOT EXISTS events (
-    serial          BIGINT NOT NULL AUTO_INCREMENT, -- serial number
-    time            TIMESTAMP NOT NULL,         -- client side, not server side
+    serial          INT NOT NULL,               -- client side serial number
+    time            BIGINT NOT NULL,            -- UNIX timestamp, client side, not server side
 	owner_name      VARCHAR(255) NOT NULL,      -- name of owner
 	object_name     VARCHAR(255) NOT NULL,      -- object name
 	region_name     VARCHAR(255) NOT NULL,      -- name of region
