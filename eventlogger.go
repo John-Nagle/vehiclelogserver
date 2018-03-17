@@ -8,6 +8,7 @@
 //  TODO:
 //  - Add JSON fields "echo", "timestamp", and "serial", in client and server. [DONE]
 //  - Add clock skew check for timestamp.
+//  - Add logging of grid
 //
 package vehiclelogserver
 
@@ -66,6 +67,7 @@ func (r slregion) String() string {
 
 type slheader struct {
 	Owner_name     string   // name of owner
+	Shard          string   // which grid
 	Object_name    string   // object name
 	Region         slregion // SL region name and corner
 	Local_position slvector // position within region
@@ -83,7 +85,7 @@ type vehlogevent struct {
 	Eventtype string  // STARTUP, SHUTDOWN, etc.
 	Msg       string  // human-readable message
 	Auxval    float32 // some other value associated with the event
-	echo      bool    // if set, client wants debug echo
+	Debug     int8    // logging level
 }
 
 //  Configuration info, from file
@@ -107,7 +109,6 @@ func (r vdbconfig) String() string {
 //
 //  Package-local variables
 //
-var config vdbconfig;                   // local config, initialized once at startup
 
 func expand(path string) (string, error) { // expand file paths with tilde for home dir
 	if len(path) == 0 || path[0] != '~' {
@@ -120,17 +121,18 @@ func expand(path string) (string, error) { // expand file paths with tilde for h
 	return filepath.Join(usr.HomeDir, path[1:]), nil
 }
 
-func initconfig(configpath string) (error) {
+func readconfig(configpath string) (vdbconfig, error) {
+    var config vdbconfig;
 	configpath, err := expand(configpath) // get absolute path
 	file, err := ioutil.ReadFile(configpath)
 	if err != nil {
-		return err
+		return config, err
 	}
 	if err != nil {
-		return err
+		return config, err
 	}
 	err = json.Unmarshal(file, &config)         // config file is json
-	return err
+	return config, err
 }
 
 func (r vehlogevent) String() string {
@@ -157,11 +159,27 @@ func Parseslvector(s string) (slvector, error) {
 	return p, err
 }
 
+func Getheaderfield(headervars http.Header, key string) (string, error) {
+    s := strings.TrimSpace(headervars.Get(key))
+    if s == "" { return s, errors.New(fmt.Sprintf("HTTP header from Second Life was missing field \"%s\"",key)) }
+    return s, nil
+}
+
 func Parseheader(headervars http.Header) (slheader, error) {
 	var hdr slheader
 	var err error
-	hdr.Owner_name = strings.TrimSpace(headervars.Get("X-Secondlife-Owner-Name"))
-	hdr.Object_name = strings.TrimSpace(headervars.Get("X-Secondlife-Object-Name"))
+	hdr.Owner_name , err = Getheaderfield(headervars, "X-Secondlife-Owner-Name")
+	if err != nil {
+		return hdr, err
+	}
+	hdr.Object_name , err = Getheaderfield(headervars, "X-Secondlife-Object-Name")
+	if err != nil {
+		return hdr, err
+	}
+	hdr.Shard , err = Getheaderfield(headervars, "X-Secondlife-Shard")
+	if err != nil {
+		return hdr, err
+	}
 	hdr.Region, err = Parseslregion(headervars.Get("X-Secondlife-Region"))
 	if err != nil {
 		return hdr, err
@@ -184,7 +202,7 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
 func Validateauthtoken(s []byte, name string, value string) error {
-	token := config.Authkey[name]            // get auth token
+	token := sv.config.Authkey[name]            // get auth token
 	if token == "" {
 		return errors.New(fmt.Sprintf("Logging authorization token %s not recognized.", name))
 	}
@@ -199,9 +217,10 @@ func Validateauthtoken(s []byte, name string, value string) error {
 }
 
 func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
-	var insstmt string = "INSERT INTO events  (time, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	var insstmt string = "INSERT INTO events  (time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err := db.Exec(insstmt, 	
 	    ev.Timestamp,
+	    hdr.Shard,
 	    hdr.Owner_name,
 	    hdr.Object_name,
 	    hdr.Region.Name,
@@ -226,7 +245,7 @@ func Addevent(s []byte, headervars http.Header, database *sql.DB) error {
 	//  Validate auth token first
 	err := Validateauthtoken(s,
 		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
-		strings.TrimSpace(headervars.Get("X-Authtoken-Value")))
+		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")))
 	if err != nil {
 		return (err)
 	}
