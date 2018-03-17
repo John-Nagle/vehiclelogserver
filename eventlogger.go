@@ -265,6 +265,7 @@ func Addevent(body []byte, headervars http.Header, database *sql.DB) error {
 func Handlerequest(sv FastCGIServer, w http.ResponseWriter, body []byte, req *http.Request) {
   err := Addevent(body, req.Header, sv.db)
     if err != nil {
+        w.Header.Write(550, []byte(err.Error()) 
         w.Write([]byte(err.Error()))     // report error as text ***TEMP***
     } else {
         w.Write([]byte("Success.")) }
