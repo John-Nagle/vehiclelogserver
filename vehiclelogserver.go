@@ -40,14 +40,17 @@ func initdb(cfile string, sv *FastCGIServer)(error) {
 	return nil                              // success
 }
 
-//  Instance of a server. Called as a subroutine for each request
+//  Instance of a server. 
 type FastCGIServer struct{
     config vdbconfig;           // the configuration
     db *sql.DB                  // database
 }
 
-func (s FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("FastCGI request echo server.\n"))
+//
+//  Called for each request
+//
+func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	w.Write([]byte("FastCGI request server, debug version.\n"))
 	w.Write([]byte("Method: "))
 	w.Write([]byte(req.Method))
 	w.Write([]byte("\n"))
@@ -63,13 +66,14 @@ func (s FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 		w.Write([]byte("\n"))
 	}
+	body := make([]byte, 5000) // buffer for body, which should not be too big
 	if req.Body != nil {
 		w.Write([]byte("Body: "))
-		body := make([]byte, 1000) // buffer for body
 		len, _ := req.Body.Read(body)
 		w.Write(body[0:len])
 		w.Write([]byte("\n"))
 	}
+	Handlerequest(sv, w, body, req)           // do it.
 }
 
 //  Run FCGI server

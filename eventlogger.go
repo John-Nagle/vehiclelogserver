@@ -241,9 +241,10 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //
 //  Addevent -- add an event to the database
 //
-func Addevent(s []byte, headervars http.Header, database *sql.DB) error {
+func Addevent(body []byte, headervars http.Header, database *sql.DB) error {
 	//  Validate auth token first
-	err := Validateauthtoken(s,
+	////body = strings.TrimSpace(body)      // because spaces matter for the hash
+	err := Validateauthtoken(body,
 		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
 		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")))
 	if err != nil {
@@ -253,9 +254,19 @@ func Addevent(s []byte, headervars http.Header, database *sql.DB) error {
 	if err != nil {
 		return (err)
 	}
-	ev, err := Parsevehevent(s) // parse JSON from vehicle script
+	ev, err := Parsevehevent(body) // parse JSON from vehicle script
 	if err != nil {
 		return (err)
 	}
 	return (Insertindb(database, hdr, ev)) // insert in database
+}
+
+//  Handlerequest -- handle a request from a client
+func Handlerequest(sv FastCGIServer, w http.ResponseWriter, body []byte, req *http.Request) {
+  err := Addevent(body, req.Header, sv.db)
+    if err != nil {
+        w.Write([]byte(err.Error()))     // report error as text ***TEMP***
+    } else {
+        w.Write([]byte("Success.")) }
+    w.Write([]byte("\n"))
 }
