@@ -257,7 +257,6 @@ func insertevent(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //
 func inserttodo(db *sql.DB, tripid string) error {
 	var insstmt string = "INSERT INTO tripstodo (tripid) VALUES (?) ON DUPLICATE KEY UPDATE stamp=NOW()"
-	fmt.Printf("Inserting into eventstodo\n") // ***TEMP***
 	_, err := db.Exec(insstmt, tripid)
 	return err
 }
@@ -313,6 +312,6 @@ func Handlerequest(sv FastCGIServer, w http.ResponseWriter, bodycontent []byte, 
 		w.WriteHeader(500)           // internal server error
 		w.Write([]byte(err.Error())) // report error as text ***TEMP***
 	    w.Write([]byte("\n"))
-		dumprequest(sv, w, req, bodycontent)  // dum entire request as text ***TEMP***
+		dumprequest(sv, w, req, bodycontent)  // dump entire request as text ***TEMP***
 	}
 }
