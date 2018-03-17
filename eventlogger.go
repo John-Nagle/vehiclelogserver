@@ -16,6 +16,7 @@ import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"database/sql"
 	"encoding/json"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -202,20 +203,26 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 	return ev, err
 }
 
+func Hashwithtoken(token []byte, s []byte)(string) {            // our SHA1 validation - must match SL's only secure hash algorithm
+	valforhash := append([]byte(token), s...)
+	hash := sha1.Sum(valforhash)                                // compute hash as binary bytes
+	hashhex := hex.EncodeToString(hash[:])                         // convert to hex to match SL
+	fmt.Printf("Token: %s Hash result: \"%s\"\n", token, hashhex) // ***TEMP***
+	return hashhex
+}
+
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
 func Validateauthtoken(s []byte, name string, value string, config vdbconfig) error {
 	token := config.Authkey[name] // get auth token
 	if token == "" {
-		return errors.New(fmt.Sprintf("Logging authorization token %s not recognized.", name))
+		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" not recognized.", name))
 	}
 	//  Do SHA1 check to validate that log entry is valid.
-	valforhash := append([]byte(token), s...)
-	hash := sha1.Sum(valforhash)                                  // validate that SHA1 of token plus string matches
-	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash) // ***TEMP***
+	hash := Hashwithtoken([]byte(token),[]byte(s))
 	if string(hash[:]) != value {
-		return errors.New(fmt.Sprintf("Logging authorization token %s failed to validate.", name))
+		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" failed to validate.", name))
 	}
 	return (nil)
 }

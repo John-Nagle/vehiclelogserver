@@ -10,6 +10,7 @@ import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"fmt"
 	"net/http"
+	"encoding/hex"
 	"testing"
 )
 
@@ -42,6 +43,9 @@ var testjson0 = []byte(`{"event":"Touched","driver":"animats Resident","driverna
 
 // logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
 var testjson1 = []byte(`{"timestamp":1234,"tripid":"ABCDEF","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`)
+var tokenname = "MAR2018"
+var testjson2 = []byte(`{"tripid":"4c8650ab4ceeeddeb8d3e31ca950255cc22918b5","severity":1,"type":"TEST","msg":"Testing","auxval":0.000000,"timestamp":1521264571,"serial":4,"debug":99}`)
+var testjson2hash = `0a62ed635221f9503ddb4315cf30a7ac0c3493c1`  // computed by SL script
 
 var testsv *FastCGIServer // the server object
 
@@ -57,6 +61,32 @@ func TestInit(t *testing.T) {
 	fmt.Printf("Config: %s\n", testsv.config)
 }
 
+func TestSHA1Compat(t *testing.T) {
+    //  From an SL script:
+    //  Hash test. 'ABCD' hashes to 'fb2f85c88567f3c8ce9b799c7c54642d0c7b41f6'
+    var t1 = "ABCD"                                             // input to hash
+    var t1hash = "fb2f85c88567f3c8ce9b799c7c54642d0c7b41f6"     // expected hex output
+    hash := sha1.Sum([]byte(t1))                                      // compute hash as binary bytes
+	hashhex := hex.EncodeToString(hash[:])                      // convert to hex to match SL
+	if t1hash != hashhex {
+	    t.Errorf(fmt.Sprintf("Input: \"%s\" Hash result: \"%s\".  Expected \"%s\".", t1, hashhex, t1hash)) // ***TEMP***
+	}
+	fmt.Printf("Go SHA1 result matches LSL result.\n")
+}
+
+func TestTokenValidation(t *testing.T) {
+	if testsv == nil {
+		t.Errorf("Config file test failed, can't do next tests.")
+		return
+	}
+	token := testsv.config.Authkey[tokenname]
+	hash := Hashwithtoken([]byte(token[:]) , testjson2)
+	fmt.Printf("Expected: \"%s\".  Calculated hash: \"%s\"", testjson2hash, hash)
+	if hash != testjson2hash {
+	    t.Errorf("Token hashes didn't match")
+    }
+}
+
 func TestEventLog(t *testing.T) {
 	if testsv == nil {
 		t.Errorf("Config file test failed, can't do next tests.")
@@ -68,11 +98,9 @@ func TestEventLog(t *testing.T) {
 	testkey = append(testkey, "MAR2018")
 	testheader1["X-Authtoken-Name"] = testkey
 	token := testsv.config.Authkey[testkey[0]]
-	valforhash := append([]byte(token), testjson1...)
-	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash) // ***TEMP***
-	hash := sha1.Sum([]byte(valforhash))                          // validate that SHA1 of token plus string matches
+	hash := Hashwithtoken([]byte(token[:]), testjson1)
 	var hashes []string
-	hashes = append(hashes, string(hash[:]))
+	hashes = append(hashes, string(hash))
 	testheader1["X-Authtoken-Hash"] = hashes
 	err := Addevent(testjson1, testheader1, testsv.config, testsv.db) // call with no database
 	if err != nil {
