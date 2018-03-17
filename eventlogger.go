@@ -286,9 +286,9 @@ func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //
 //  Addevent -- add an event to the database
 //
-func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB) error {
+func Addevent(bodycontent []byte, headervars http.Header, config vdbconfig, db *sql.DB) error {
 	//  Validate auth token first
-	err := Validateauthtoken(body,
+	err := Validateauthtoken(bodycontent,
 		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
 		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")),
 		config)
@@ -299,7 +299,7 @@ func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB)
 	if err != nil {
 		return err
 	}
-	ev, err := Parsevehevent(body) // parse JSON from vehicle script
+	ev, err := Parsevehevent(bodycontent) // parse JSON from vehicle script
 	if err != nil {
 		return err
 	}
@@ -307,13 +307,12 @@ func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB)
 }
 
 //  Handlerequest -- handle a request from a client
-func Handlerequest(sv FastCGIServer, w http.ResponseWriter, body []byte, req *http.Request) {
-	err := Addevent(body, req.Header, sv.config, sv.db)
+func Handlerequest(sv FastCGIServer, w http.ResponseWriter, bodycontent []byte, req *http.Request) {
+	err := Addevent(bodycontent, req.Header, sv.config, sv.db)
 	if err != nil {
 		w.WriteHeader(500)           // internal server error
 		w.Write([]byte(err.Error())) // report error as text ***TEMP***
-	} else {
-		w.Write([]byte("Success."))
+	    w.Write([]byte("\n"))
+		dumprequest(sv, w, req, bodycontent)  // dum entire request as text ***TEMP***
 	}
-	w.Write([]byte("\n"))
 }

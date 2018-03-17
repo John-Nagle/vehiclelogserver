@@ -48,6 +48,31 @@ type FastCGIServer struct {
 }
 
 //
+//  dumprequest  -- raw debug print
+//
+func dumprequest(sv FastCGIServer, w http.ResponseWriter, req *http.Request, bodycontent []byte) {
+	w.Write([]byte("FastCGI request, debug info.\n"))
+	w.Write([]byte("Method: "))
+	w.Write([]byte(req.Method))
+	w.Write([]byte("\n"))
+	//  Header items
+	w.Write([]byte("Header:\n"))
+	for k, v := range req.Header {
+		w.Write([]byte(" "))
+		w.Write([]byte(k))
+		w.Write([]byte("="))
+		for i := range v {
+			w.Write([]byte(v[i]))
+			w.Write([]byte(" "))
+		}
+		w.Write([]byte("\n"))
+	}
+	w.Write([]byte("Body: "))
+	w.Write(bodycontent)
+	w.Write([]byte("\n"))
+}
+
+//
 //  Called for each request
 //
 func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -71,9 +96,11 @@ func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if req.Body != nil {
 		w.Write([]byte("Body: "))
 		len, _ := req.Body.Read(body)
-		w.Write(body[0:len])
+		bodycontent := body[0:len]
+		w.Write(body)
 		w.Write([]byte("\n"))
-		Handlerequest(sv, w, body[0:len], req) // do it.
+		Handlerequest(sv, w, bodycontent, req) // do it.
+		dumprequest(sv, w, req, bodycontent)
 	}
 }
 
