@@ -10,7 +10,7 @@
 //  - Add clock skew check for timestamp.
 //  - Add logging of grid
 //
-package vehiclelogserver
+package main
 
 import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it

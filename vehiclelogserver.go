@@ -4,7 +4,7 @@
 //  Compatible with Dreamhost
 //  Echoes back whatever you send it.
 //
-package vehiclelogserver
+package main
 
 import (
 	"database/sql"

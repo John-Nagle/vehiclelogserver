@@ -4,7 +4,7 @@
 //  Animats
 //  March, 2018
 //
-package vehiclelogserver
+package main
 
 import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
