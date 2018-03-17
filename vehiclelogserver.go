@@ -73,8 +73,8 @@ func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		len, _ := req.Body.Read(body)
 		w.Write(body[0:len])
 		w.Write([]byte("\n"))
+		Handlerequest(sv, w, body[0:len], req) // do it.
 	}
-	Handlerequest(sv, w, body, req) // do it.
 }
 
 //  Run FCGI server

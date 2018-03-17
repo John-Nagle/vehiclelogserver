@@ -221,8 +221,9 @@ func Validateauthtoken(s []byte, name string, value string, config vdbconfig) er
 	}
 	//  Do SHA1 check to validate that log entry is valid.
 	hash := Hashwithtoken([]byte(token),[]byte(s))
-	if string(hash[:]) != value {
-		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" failed to validate.", name))
+	if hash != value {
+		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" failed to validate.\nText: \"%s\"\nHash sent: \"%s\"\nHash calc: \"%s\"", 
+		    name, s, value, hash))
 	}
 	return (nil)
 }
