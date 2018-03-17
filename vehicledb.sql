@@ -7,6 +7,7 @@
 
 CREATE DATABASE IF NOT EXISTS vehicles CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE vehicles;
+
 --
 --  events -- raw events sent from vehicle script
 --
@@ -28,8 +29,7 @@ CREATE TABLE IF NOT EXISTS events (
 	auxval          FLOAT NOT NULL,             -- some other value associated with the event type
 	INDEX(tripid),
 	UNIQUE INDEX(tripid, serial),               -- catch dups at insert time
-	INDEX(eventtype),
-	INDEX(summary)
+	INDEX(eventtype)
 ) ENGINE InnoDB;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS errorlog (
 --  
 CREATE TABLE IF NOT EXISTS tripstodo (
     tripid          CHAR(40) NOT NULL PRIMARY KEY,      -- trip ID if relevant
-    stamp           TIMESTAMP NOT NULL,         -- last update
+    stamp           TIMESTAMP NOT NULL          -- last update
 ) ENGINE InnoDB;
 
 --

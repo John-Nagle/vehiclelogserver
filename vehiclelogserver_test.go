@@ -84,8 +84,8 @@ func TestTokenValidation(t *testing.T) {
 	}
 	token := testsv.config.Authkey[tokenname]
 	hash := Hashwithtoken([]byte(token[:]) , testjson2)
-	fmt.Printf("Expected: \"%s\".  Calculated hash: \"%s\"", testjson2hash, hash)
 	if hash != testjson2hash {
+	    fmt.Printf("Expected: \"%s\".  Calculated hash: \"%s\"\n", testjson2hash, hash)
 	    t.Errorf("Token hashes didn't match")
     }
 }

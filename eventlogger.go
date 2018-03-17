@@ -256,7 +256,8 @@ func insertevent(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //  inserttodo -- update to-do list of trips in progress
 //
 func inserttodo(db *sql.DB, tripid string) error {
-	var insstmt string = "INSERT INTO eventstodo (tripid) VALUES (?) ON DUPLICATE KEY UPDATE TIMESTAMP=NOW()"
+	var insstmt string = "INSERT INTO tripstodo (tripid) VALUES (?) ON DUPLICATE KEY UPDATE stamp=NOW()"
+	fmt.Printf("Inserting into eventstodo\n") // ***TEMP***
 	_, err := db.Exec(insstmt, tripid)
 	return err
 }
@@ -272,7 +273,7 @@ func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	err = insertevent(db, hdr, ev)
 	if err == nil {
 		err = inserttodo(db, ev.Tripid)
-		if err != nil {
+		if err == nil {
 			_, err = db.Exec("COMMIT")
 		} // all OK, commit
 	}
