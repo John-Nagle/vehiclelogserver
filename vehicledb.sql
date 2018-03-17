@@ -5,8 +5,8 @@
 --  March, 2018
 --
 
-CREATE DATABASE IF NOT EXISTS vehiclelog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE vehiclelog;
+CREATE DATABASE IF NOT EXISTS vehicles CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE vehicles;
 --
 --  Events -- raw events sent from vehicle script
 --
