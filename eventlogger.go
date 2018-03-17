@@ -15,8 +15,8 @@ package main
 import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"database/sql"
-	"encoding/json"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -193,26 +193,29 @@ func Parseheader(headervars http.Header) (slheader, error) {
 	if err != nil {
 		return hdr, err
 	}
-	fmt.Printf("Parseheader: %s\n", hdr) // ***TEMP***
+	////fmt.Printf("Parseheader: %s\n", hdr) // ***TEMP***
 	return hdr, nil
 }
 
 func Parsevehevent(s []byte) (vehlogevent, error) {
 	var ev vehlogevent
 	err := json.Unmarshal(s, &ev) // decode JSON
+	if err != nil {return ev,err}
+	if len(ev.Tripid) != 40 {   // must be length of SHA1 hash in hex
+	    return ev, errors.New(fmt.Sprintf("Trip ID \"%s\" from Second Life was not 40 bytes long", ev.Tripid))
+	}
 	return ev, err
 }
 
-func Hashwithtoken(token []byte, s []byte)(string) {            // our SHA1 validation - must match SL's only secure hash algorithm
+func Hashwithtoken(token []byte, s []byte) string { // our SHA1 validation - must match SL's only secure hash algorithm
 	valforhash := append([]byte(token), s...)
-	hash := sha1.Sum(valforhash)                                // compute hash as binary bytes
-	hashhex := hex.EncodeToString(hash[:])                         // convert to hex to match SL
-	fmt.Printf("Token: %s Hash result: \"%s\"\n", token, hashhex) // ***TEMP***
+	hash := sha1.Sum(valforhash)                                  // compute hash as binary bytes
+	hashhex := hex.EncodeToString(hash[:])                        // convert to hex to match SL
 	return hashhex
 }
 
 //
-//  Validateauthtoken -- validate that string has correct hash for auth token
+//  validateauthtoken -- validate that string has correct hash for auth token
 //
 func Validateauthtoken(s []byte, name string, value string, config vdbconfig) error {
 	token := config.Authkey[name] // get auth token
@@ -220,15 +223,15 @@ func Validateauthtoken(s []byte, name string, value string, config vdbconfig) er
 		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" not recognized.", name))
 	}
 	//  Do SHA1 check to validate that log entry is valid.
-	hash := Hashwithtoken([]byte(token),[]byte(s))
+	hash := Hashwithtoken([]byte(token), []byte(s))
 	if hash != value {
-		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" failed to validate.\nText: \"%s\"\nHash sent: \"%s\"\nHash calc: \"%s\"", 
-		    name, s, value, hash))
+		return errors.New(fmt.Sprintf("Logging authorization token \"%s\" failed to validate.\nText: \"%s\"\nHash sent: \"%s\"\nHash calc: \"%s\"",
+			name, s, value, hash))
 	}
 	return (nil)
 }
 
-func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
+func insertevent(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	var insstmt string = "INSERT INTO events  (time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err := db.Exec(insstmt,
 		ev.Timestamp,
@@ -246,7 +249,36 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 		ev.Msg,
 		ev.Auxval,
 		ev.Serial)
+	return err
+}
 
+//
+//  inserttodo -- update to-do list of trips in progress
+//
+func inserttodo(db *sql.DB, tripid string) error {
+	var insstmt string = "INSERT INTO eventstodo (tripid) VALUES (?) ON DUPLICATE KEY UPDATE TIMESTAMP=NOW()"
+	_, err := db.Exec(insstmt, tripid)
+	return err
+}
+
+//
+//  dbupdate -- do the database updates to insert an event
+//
+func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
+	_, err := db.Exec("BEGIN") // updating events and tripstodo
+	if err != nil {
+		return err
+	}
+	err = insertevent(db, hdr, ev)
+	if err == nil {
+		err = inserttodo(db, ev.Tripid)
+		if err != nil {
+			_, err = db.Exec("COMMIT")
+		} // all OK, commit
+	}
+	if err != nil {
+		_, _ = db.Exec("ROLLBACK")
+	}
 	return err
 }
 
@@ -255,7 +287,6 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //
 func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB) error {
 	//  Validate auth token first
-	////body = strings.TrimSpace(body)      // because spaces matter for the hash
 	err := Validateauthtoken(body,
 		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
 		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")),
@@ -265,13 +296,13 @@ func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB)
 	}
 	hdr, err := Parseheader(headervars) // parse HTTP header
 	if err != nil {
-		return (err)
+		return err
 	}
 	ev, err := Parsevehevent(body) // parse JSON from vehicle script
 	if err != nil {
-		return (err)
+		return err
 	}
-	return (Insertindb(db, hdr, ev)) // insert in database
+	return (dbupdate(db, hdr, ev)) // insert in database
 }
 
 //  Handlerequest -- handle a request from a client

@@ -8,7 +8,7 @@
 CREATE DATABASE IF NOT EXISTS vehicles CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE vehicles;
 --
---  Events -- raw events sent from vehicle script
+--  events -- raw events sent from vehicle script
 --
 CREATE TABLE IF NOT EXISTS events (
     serial          INT NOT NULL,               -- client side serial number
@@ -26,15 +26,14 @@ CREATE TABLE IF NOT EXISTS events (
 	eventtype       VARCHAR(20) NOT NULL,       -- STARTUP, SHUTDOWN, etc.
 	msg             TEXT,                       -- human-readable message
 	auxval          FLOAT NOT NULL,             -- some other value associated with the event type
-	                                            -- summarization status, set by summarizer
-	summary         ENUM('unchecked', 'complete', 'incomplete', 'junk') NOT NULL DEFAULT 'unchecked',
 	INDEX(tripid),
 	UNIQUE INDEX(tripid, serial),               -- catch dups at insert time
 	INDEX(eventtype),
 	INDEX(summary)
 ) ENGINE InnoDB;
+
 --
---  Errors -- error log
+--  errorlog - internal error logging
 --
 CREATE TABLE IF NOT EXISTS errorlog (
     stamp           TIMESTAMP,                  -- automatic timestamp
@@ -44,8 +43,19 @@ CREATE TABLE IF NOT EXISTS errorlog (
     INDEX(owner_name),
     INDEX(tripid)
 ) ENGINE InnoDB;
+
 --
---  Trips -- info about trips
+--  tripstodo  -- trip IDs in events not yet summarized to trips
+--  
+CREATE TABLE IF NOT EXISTS tripstodo (
+    tripid          CHAR(40) NOT NULL PRIMARY KEY,      -- trip ID if relevant
+    stamp           TIMESTAMP NOT NULL,         -- last update
+) ENGINE InnoDB;
+
+--
+--  trips -- info about trips
+--
+--  ***NEEDS WORK*** Dreamhost server doesn't do spatial indices.
 --
 CREATE TABLE IF NOT EXISTS trips (
     date            TIMESTAMP NOT NULL,         -- time of trip

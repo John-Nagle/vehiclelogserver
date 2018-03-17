@@ -10,7 +10,10 @@ import (
 	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"fmt"
 	"net/http"
+	"strings"
 	"encoding/hex"
+	"math/rand"
+	"time"
 	"testing"
 )
 
@@ -42,7 +45,7 @@ var testheader1 = http.Header{
 var testjson0 = []byte(`{"event":"Touched","driver":"animats Resident","drivername":"Joe Magarac"}`)
 
 // logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
-var testjson1 = []byte(`{"timestamp":1234,"tripid":"ABCDEF","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`)
+var testjson1 = `{"timestamp":1234,"tripid":"TRIPID","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`
 var tokenname = "MAR2018"
 var testjson2 = []byte(`{"tripid":"4c8650ab4ceeeddeb8d3e31ca950255cc22918b5","severity":1,"type":"TEST","msg":"Testing","auxval":0.000000,"timestamp":1521264571,"serial":4,"debug":99}`)
 var testjson2hash = `0a62ed635221f9503ddb4315cf30a7ac0c3493c1`  // computed by SL script
@@ -92,17 +95,23 @@ func TestEventLog(t *testing.T) {
 		t.Errorf("Config file test failed, can't do next tests.")
 		return
 	}
+	rand.Seed( time.Now().UTC().UnixNano())
 	//  Basic parsing test
+	//  Make a unique trip ID - 40 chars of hex
+	tripid1 := fmt.Sprintf("%d",(rand.Int63()))                                 // 63-bit random number
+	triphash := sha1.Sum([]byte(tripid1))                                       // compute hash as binary bytes
+	tripid := hex.EncodeToString(triphash[:])                                   // convert to hex to match SL
+	testjson := []byte(strings.Replace(testjson1, "TRIPID", tripid,1))          // fill in a new trip ID
 	//  Build properly signed test JSON
 	var testkey []string
 	testkey = append(testkey, "MAR2018")
 	testheader1["X-Authtoken-Name"] = testkey
 	token := testsv.config.Authkey[testkey[0]]
-	hash := Hashwithtoken([]byte(token[:]), testjson1)
+	hash := Hashwithtoken([]byte(token[:]), testjson)
 	var hashes []string
 	hashes = append(hashes, string(hash))
 	testheader1["X-Authtoken-Hash"] = hashes
-	err := Addevent(testjson1, testheader1, testsv.config, testsv.db) // call with no database
+	err := Addevent(testjson, testheader1, testsv.config, testsv.db) // call with no database
 	if err != nil {
 		t.Errorf(err.Error())
 	}
