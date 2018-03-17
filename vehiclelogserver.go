@@ -7,12 +7,13 @@
 package vehiclelogserver
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/fcgi"
-	"database/sql"
-	"log"
 )
+
 //
 //  Configuration
 //
@@ -23,27 +24,27 @@ var configloc string = "~/keys/vehicledbconf.json"
 //
 //  initialization
 //
-func initdb(cfile string, sv *FastCGIServer)(error) {
-    //  Read the config file into the server object
-    var err error
+func initdb(cfile string, sv *FastCGIServer) error {
+	//  Read the config file into the server object
+	var err error
 	sv.config, err = readconfig(cfile)
 	if err != nil {
 		return err
 	}
 	//  Set database parameters (does not actually do an open in Go, so it won't fail)
-    s := fmt.Sprintf("%s:%s@tcp(%s)/%s", 
-        sv.config.Mysql.User, sv.config.Mysql.Password, sv.config.Mysql.Domain, sv.config.Mysql.Database)
-    sv.db, err = sql.Open("mysql",s)
+	s := fmt.Sprintf("%s:%s@tcp(%s)/%s",
+		sv.config.Mysql.User, sv.config.Mysql.Password, sv.config.Mysql.Domain, sv.config.Mysql.Database)
+	sv.db, err = sql.Open("mysql", s)
 	if err != nil {
 		return err
 	}
-	return nil                              // success
+	return nil // success
 }
 
-//  Instance of a server. 
-type FastCGIServer struct{
-    config vdbconfig;           // the configuration
-    db *sql.DB                  // database
+//  Instance of a server.
+type FastCGIServer struct {
+	config vdbconfig // the configuration
+	db     *sql.DB   // database
 }
 
 //
@@ -73,16 +74,16 @@ func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		w.Write(body[0:len])
 		w.Write([]byte("\n"))
 	}
-	Handlerequest(sv, w, body, req)           // do it.
+	Handlerequest(sv, w, body, req) // do it.
 }
 
 //  Run FCGI server
 func main() {
 	fmt.Println("Starting server...")
-	sv:= new(FastCGIServer)
+	sv := new(FastCGIServer)
 	err := initdb(configloc, sv)
 	if err != nil {
-	    log.Fatal(err)                  // initialization failed, cannot start
+		log.Fatal(err) // initialization failed, cannot start
 	}
 	fcgi.Serve(nil, sv)
 }

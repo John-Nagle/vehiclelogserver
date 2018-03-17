@@ -7,9 +7,9 @@
 package vehiclelogserver
 
 import (
+	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"fmt"
 	"net/http"
-	"crypto/sha1" // cryptograpically weak, but SL still uses it
 	"testing"
 )
 
@@ -43,38 +43,38 @@ var testjson0 = []byte(`{"event":"Touched","driver":"animats Resident","driverna
 // logdata = logdata + ["tripid"] + gTripId + ["severity"] + severity + ["type"] + msgtype + ["msg"] + msg + ["auxval"] + val;
 var testjson1 = []byte(`{"timestamp":1234,"tripid":"ABCDEF","severity":2,"type":"STARTUP","msg":"John Doe","auxval":1.0}`)
 
-var sv *FastCGIServer;              // the server object
+var testsv *FastCGIServer // the server object
 
 func TestInit(t *testing.T) {
-    //  Reads the config file into variable "config".
-    sv = new(FastCGIServer)
-    err := initdb("~/keys/vehicledbconf.json",sv)
+	//  Reads the config file into variable "config".
+	testsv = new(FastCGIServer)
+	err := initdb("~/keys/vehicledbconf.json", testsv)
 	if err != nil {
-	    sv = nil;
+		testsv = nil
 		t.Errorf(err.Error())
 		return
 	}
-    fmt.Printf("Config: %s\n", sv.config)
+	fmt.Printf("Config: %s\n", testsv.config)
 }
 
 func TestEventLog(t *testing.T) {
-    if sv == nil {
-       t.Errorf("Config file test failed, can't do next tests.")
-       return
-    }
+	if testsv == nil {
+		t.Errorf("Config file test failed, can't do next tests.")
+		return
+	}
 	//  Basic parsing test
 	//  Build properly signed test JSON
-	var testkey []string;
-	testkey = append(testkey,"MAR2018")
+	var testkey []string
+	testkey = append(testkey, "MAR2018")
 	testheader1["X-Authtoken-Name"] = testkey
-	token := sv.config.Authkey[testkey[0]]
-	valforhash := append([]byte(token),testjson1...)
-	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash);   // ***TEMP***
-	hash := sha1.Sum([]byte(valforhash)) // validate that SHA1 of token plus string matches
-	var hashes []string;
+	token := testsv.config.Authkey[testkey[0]]
+	valforhash := append([]byte(token), testjson1...)
+	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash) // ***TEMP***
+	hash := sha1.Sum([]byte(valforhash))                          // validate that SHA1 of token plus string matches
+	var hashes []string
 	hashes = append(hashes, string(hash[:]))
 	testheader1["X-Authtoken-Hash"] = hashes
-	err := Addevent(testjson1, testheader1, sv.db) // call with no database
+	err := Addevent(testjson1, testheader1, testsv.config, testsv.db) // call with no database
 	if err != nil {
 		t.Errorf(err.Error())
 	}

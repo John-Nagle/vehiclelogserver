@@ -18,13 +18,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"net/http"
 	"os/user"
 	"path/filepath"
 	"strings"
-	_ "github.com/go-sql-driver/mysql"
 )
+
 //
 //  Package-local types
 //
@@ -91,7 +92,7 @@ type vehlogevent struct {
 //  Configuration info, from file
 type vdbconfig struct {
 	Mysql struct {
-	    Domain   string // domain for MySQL database
+		Domain   string // domain for MySQL database
 		Database string // for MySQL database
 		User     string
 		Password string
@@ -106,6 +107,7 @@ func (r vdbconfig) String() string {
 	}
 	return (fmt.Sprintf("domain: %s  database: %s  user: %s authkeys: %s", r.Mysql.Domain, r.Mysql.Database, r.Mysql.User, s))
 }
+
 //
 //  Package-local variables
 //
@@ -122,7 +124,7 @@ func expand(path string) (string, error) { // expand file paths with tilde for h
 }
 
 func readconfig(configpath string) (vdbconfig, error) {
-    var config vdbconfig;
+	var config vdbconfig
 	configpath, err := expand(configpath) // get absolute path
 	file, err := ioutil.ReadFile(configpath)
 	if err != nil {
@@ -131,7 +133,7 @@ func readconfig(configpath string) (vdbconfig, error) {
 	if err != nil {
 		return config, err
 	}
-	err = json.Unmarshal(file, &config)         // config file is json
+	err = json.Unmarshal(file, &config) // config file is json
 	return config, err
 }
 
@@ -160,23 +162,25 @@ func Parseslvector(s string) (slvector, error) {
 }
 
 func Getheaderfield(headervars http.Header, key string) (string, error) {
-    s := strings.TrimSpace(headervars.Get(key))
-    if s == "" { return s, errors.New(fmt.Sprintf("HTTP header from Second Life was missing field \"%s\"",key)) }
-    return s, nil
+	s := strings.TrimSpace(headervars.Get(key))
+	if s == "" {
+		return s, errors.New(fmt.Sprintf("HTTP header from Second Life was missing field \"%s\"", key))
+	}
+	return s, nil
 }
 
 func Parseheader(headervars http.Header) (slheader, error) {
 	var hdr slheader
 	var err error
-	hdr.Owner_name , err = Getheaderfield(headervars, "X-Secondlife-Owner-Name")
+	hdr.Owner_name, err = Getheaderfield(headervars, "X-Secondlife-Owner-Name")
 	if err != nil {
 		return hdr, err
 	}
-	hdr.Object_name , err = Getheaderfield(headervars, "X-Secondlife-Object-Name")
+	hdr.Object_name, err = Getheaderfield(headervars, "X-Secondlife-Object-Name")
 	if err != nil {
 		return hdr, err
 	}
-	hdr.Shard , err = Getheaderfield(headervars, "X-Secondlife-Shard")
+	hdr.Shard, err = Getheaderfield(headervars, "X-Secondlife-Shard")
 	if err != nil {
 		return hdr, err
 	}
@@ -201,15 +205,15 @@ func Parsevehevent(s []byte) (vehlogevent, error) {
 //
 //  Validateauthtoken -- validate that string has correct hash for auth token
 //
-func Validateauthtoken(s []byte, name string, value string) error {
-	token := sv.config.Authkey[name]            // get auth token
+func Validateauthtoken(s []byte, name string, value string, config vdbconfig) error {
+	token := config.Authkey[name] // get auth token
 	if token == "" {
 		return errors.New(fmt.Sprintf("Logging authorization token %s not recognized.", name))
 	}
 	//  Do SHA1 check to validate that log entry is valid.
-	valforhash := append([]byte(token),s...)
-	hash := sha1.Sum(valforhash) // validate that SHA1 of token plus string matches
-	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash);   // ***TEMP***
+	valforhash := append([]byte(token), s...)
+	hash := sha1.Sum(valforhash)                                  // validate that SHA1 of token plus string matches
+	fmt.Printf("Token: %s For hash: \"%s\"\n", token, valforhash) // ***TEMP***
 	if string(hash[:]) != value {
 		return errors.New(fmt.Sprintf("Logging authorization token %s failed to validate.", name))
 	}
@@ -218,22 +222,22 @@ func Validateauthtoken(s []byte, name string, value string) error {
 
 func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	var insstmt string = "INSERT INTO events  (time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-	_, err := db.Exec(insstmt, 	
-	    ev.Timestamp,
-	    hdr.Shard,
-	    hdr.Owner_name,
-	    hdr.Object_name,
-	    hdr.Region.Name,
-	    hdr.Region.X,
-	    hdr.Region.Y,
-	    hdr.Local_position.X,
-	    hdr.Local_position.Y,
-	    ev.Tripid,
-	    ev.Severity,
-	    ev.Eventtype,
-	    ev.Msg,
-	    ev.Auxval,
-	    ev.Serial)
+	_, err := db.Exec(insstmt,
+		ev.Timestamp,
+		hdr.Shard,
+		hdr.Owner_name,
+		hdr.Object_name,
+		hdr.Region.Name,
+		hdr.Region.X,
+		hdr.Region.Y,
+		hdr.Local_position.X,
+		hdr.Local_position.Y,
+		ev.Tripid,
+		ev.Severity,
+		ev.Eventtype,
+		ev.Msg,
+		ev.Auxval,
+		ev.Serial)
 
 	return err
 }
@@ -241,12 +245,13 @@ func Insertindb(db *sql.DB, hdr slheader, ev vehlogevent) error {
 //
 //  Addevent -- add an event to the database
 //
-func Addevent(body []byte, headervars http.Header, database *sql.DB) error {
+func Addevent(body []byte, headervars http.Header, config vdbconfig, db *sql.DB) error {
 	//  Validate auth token first
 	////body = strings.TrimSpace(body)      // because spaces matter for the hash
 	err := Validateauthtoken(body,
 		strings.TrimSpace(headervars.Get("X-Authtoken-Name")),
-		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")))
+		strings.TrimSpace(headervars.Get("X-Authtoken-Hash")),
+		config)
 	if err != nil {
 		return (err)
 	}
@@ -258,16 +263,17 @@ func Addevent(body []byte, headervars http.Header, database *sql.DB) error {
 	if err != nil {
 		return (err)
 	}
-	return (Insertindb(database, hdr, ev)) // insert in database
+	return (Insertindb(db, hdr, ev)) // insert in database
 }
 
 //  Handlerequest -- handle a request from a client
 func Handlerequest(sv FastCGIServer, w http.ResponseWriter, body []byte, req *http.Request) {
-  err := Addevent(body, req.Header, sv.db)
-    if err != nil {
-        w.Header.Write(550, []byte(err.Error()) 
-        w.Write([]byte(err.Error()))     // report error as text ***TEMP***
-    } else {
-        w.Write([]byte("Success.")) }
-    w.Write([]byte("\n"))
+	err := Addevent(body, req.Header, sv.config, sv.db)
+	if err != nil {
+		w.WriteHeader(500)           // internal server error
+		w.Write([]byte(err.Error())) // report error as text ***TEMP***
+	} else {
+		w.Write([]byte("Success."))
+	}
+	w.Write([]byte("\n"))
 }
