@@ -1,0 +1,244 @@
+serial	time	shard	owner_name	object_name	region_name	region_corner_x	region_corner_Y	local_position_x	local_position_y	tripid	severity	eventtype	msg	auxval
+0	1521350914	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	8.88708	53.5186	e065cf9f1441d2e1b664c904f57505c256e97196	1	STARTUP	animats Resident/Joe Magarac	0
+1	1521350915	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	8.88803	53.5193	e065cf9f1441d2e1b664c904f57505c256e97196	1	SITTER	on prim #1 :animats Resident distance to seat	0.737693
+2	1521350915	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	8.85515	53.6037	e065cf9f1441d2e1b664c904f57505c256e97196	1	RIDERCOUNT		1
+3	1521350915	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	8.79054	53.7558	e065cf9f1441d2e1b664c904f57505c256e97196	0	PERMS	Got permissions	0
+4	1521350938	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	7.34575	251.878	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	17.4883
+5	1521350938	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	6.82087	252.682	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	17.4301
+6	1521350939	Production	animats Resident	Double region crosser 1.03	Imperial	257280	260352	3.40924	1.82151	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		16.3002
+7	1521350939	Production	animats Resident	Double region crosser 1.03	Imperial	257280	260352	3.40924	1.82151	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.096615
+8	1521350942	Production	animats Resident	Double region crosser 1.03	Oslar	257024	260352	254.689	8.6467	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.21563
+9	1521350942	Production	animats Resident	Double region crosser 1.03	Oslar	257024	260352	254.689	8.6467	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066132
+10	1521350957	Production	animats Resident	Double region crosser 1.03	Oslar	257024	260352	10.1903	253.486	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	14.2433
+11	1521350957	Production	animats Resident	Double region crosser 1.03	Oslar	257024	260352	8.76553	254.343	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	14.2159
+12	1521350959	Production	animats Resident	Double region crosser 1.03	Achemon	257024	260608	3.73359	1.53983	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		11.9711
+13	1521350959	Production	animats Resident	Double region crosser 1.03	Achemon	257024	260608	3.26691	1.8489	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066883
+14	1521350961	Production	animats Resident	Double region crosser 1.03	Vine	256768	260608	254.148	5.2587	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		13.4885
+15	1521350961	Production	animats Resident	Double region crosser 1.03	Vine	256768	260608	253.903	5.42039	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.06702
+16	1521350975	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	252.03	152.457	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.9317
+17	1521350975	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	252.029	152.457	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.026321
+18	1521350989	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	252.96	248.883	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		22.3552
+19	1521350989	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	251.013	248.954	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.088516
+20	1521351029	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	1.81422	250.985	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		6.64004
+21	1521351029	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	1.96194	251.013	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.089172
+22	1521351043	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	254.533	252.338	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		4.35232
+23	1521351043	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	254.533	252.338	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.077087
+24	1521351058	Production	animats Resident	Double region crosser 1.03	Tyta	256256	260864	251.886	0.616933	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		4.88709
+25	1521351058	Production	animats Resident	Double region crosser 1.03	Tyta	256256	260864	251.867	0.432832	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.055466
+26	1521351061	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	1.26353	0.32964	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	7.46726
+27	1521351062	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	2.08407	0.383151	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.44549
+28	1521351062	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	2.24881	0.393982	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066452
+29	1521351068	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	4.62982	254.957	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		0.600095
+30	1521351068	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	4.63502	254.944	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.091965
+31	1521351091	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	73.1364	1.37874	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		6.52595
+32	1521351091	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	73.1364	1.37874	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.045364
+33	1521351112	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	76.4808	254.69	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.20281
+34	1521351112	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	76.4502	254.371	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066711
+35	1521351125	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	105.985	1.51367	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.51389
+36	1521351125	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	105.983	1.51435	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.07164
+37	1521351186	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	56.0742	163.856	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		2.04354
+38	1521351247	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	55.5359	165.508	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		2.04726
+39	1521351308	Production	animats Resident	Double region crosser 1.03	Horisme	256512	260864	95.2175	35.5161	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		2.19817
+40	1521351313	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	89.922	254.261	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.59528
+41	1521351313	Production	animats Resident	Double region crosser 1.03	Minoa	256512	260608	89.9218	254.261	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070862
+42	1521351342	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	254.355	245.711	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.3538
+43	1521351342	Production	animats Resident	Double region crosser 1.03	Rubi	256256	260608	254.355	245.711	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.088745
+44	1521351375	Production	animats Resident	Double region crosser 1.03	Hector	256000	260608	253.277	248.499	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.75287
+45	1521351375	Production	animats Resident	Double region crosser 1.03	Hector	256000	260608	253.064	248.501	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.07312
+46	1521351394	Production	animats Resident	Double region crosser 1.03	Notata	256000	260864	150.874	1.14535	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		6.10822
+47	1521351394	Production	animats Resident	Double region crosser 1.03	Notata	256000	260864	150.874	1.14535	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.021088
+48	1521351405	Production	animats Resident	Double region crosser 1.03	Itame	255744	260864	253.595	93.6211	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.4131
+49	1521351405	Production	animats Resident	Double region crosser 1.03	Itame	255744	260864	253.595	93.6211	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066925
+50	1521351417	Production	animats Resident	Double region crosser 1.03	Sabra	255488	260864	253.301	78.6796	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		24.4376
+51	1521351417	Production	animats Resident	Double region crosser 1.03	Sabra	255488	260864	253.301	78.6783	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070587
+52	1521351430	Production	animats Resident	Double region crosser 1.03	Achlya	255232	260864	253.111	92.032	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		17.9504
+53	1521351431	Production	animats Resident	Double region crosser 1.03	Achlya	255232	260864	253.111	92.0324	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.048218
+54	1521351443	Production	animats Resident	Double region crosser 1.03	Tethea	254976	260864	252.379	78.597	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		15.0485
+55	1521351443	Production	animats Resident	Double region crosser 1.03	Tethea	254976	260864	251.115	78.2871	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.087463
+56	1521351458	Production	animats Resident	Double region crosser 1.03	Or	254720	260864	253.815	58.859	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		22.069
+57	1521351458	Production	animats Resident	Double region crosser 1.03	Or	254720	260864	253.815	58.859	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.088318
+58	1521351496	Production	animats Resident	Double region crosser 1.03	Eson	254464	260864	253.709	164.257	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		22.165
+59	1521351496	Production	animats Resident	Double region crosser 1.03	Eson	254464	260864	253.349	164.529	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.073425
+60	1521351502	Production	animats Resident	Double region crosser 1.03	Epione	254464	261120	173.28	2.09605	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.9662
+61	1521351503	Production	animats Resident	Double region crosser 1.03	Epione	254464	261120	173.12	2.2657	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.043274
+62	1521351539	Production	animats Resident	Double region crosser 1.03	Siona	254464	261376	84.4898	1.19696	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		5.06582
+63	1521351539	Production	animats Resident	Double region crosser 1.03	Siona	254464	261376	84.4862	1.19858	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.08783
+64	1521351559	Production	animats Resident	Double region crosser 1.03	Gnoma	254464	261632	103.66	2.31055	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		18.7655
+65	1521351559	Production	animats Resident	Double region crosser 1.03	Gnoma	254464	261632	103.66	2.31055	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.041809
+66	1521351575	Production	animats Resident	Double region crosser 1.03	Ridens	254464	261888	172.97	5.41574	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		12.4206
+67	1521351576	Production	animats Resident	Double region crosser 1.03	Ridens	254464	261888	173.186	5.91298	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.278625
+68	1521351607	Production	animats Resident	Double region crosser 1.03	Viciae	254464	262144	242.641	1.86272	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.3471
+69	1521351607	Production	animats Resident	Double region crosser 1.03	Viciae	254464	262144	242.788	2.68464	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.024292
+70	1521351610	Production	animats Resident	Double region crosser 1.03	Albulata	254720	262144	2.07882	32.7197	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.3227
+71	1521351610	Production	animats Resident	Double region crosser 1.03	Albulata	254720	262144	2.07882	32.7197	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.069946
+72	1521351621	Production	animats Resident	Double region crosser 1.03	Brithys	254720	262400	24.3902	2.35619	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		14.0579
+73	1521351621	Production	animats Resident	Double region crosser 1.03	Brithys	254720	262400	24.3533	2.66604	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066772
+74	1521351636	Production	animats Resident	Double region crosser 1.03	Emmelia	254720	262656	29.0899	1.76786	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		22.3913
+75	1521351636	Production	animats Resident	Double region crosser 1.03	Emmelia	254720	262656	29.0899	1.76786	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.069397
+76	1521351659	Production	animats Resident	Double region crosser 1.03	Lunaris	254720	262912	83.3632	2.10592	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		19.6238
+77	1521351659	Production	animats Resident	Double region crosser 1.03	Lunaris	254720	262912	83.5154	2.51075	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066406
+78	1521351695	Production	animats Resident	Double region crosser 1.03	Moma	254720	263168	212.299	1.58438	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.001
+79	1521351696	Production	animats Resident	Double region crosser 1.03	Moma	254720	263168	212.261	1.52378	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.109985
+80	1521351706	Production	animats Resident	Double region crosser 1.03	Tridens	254976	263168	1.44742	91.9403	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		14.0511
+81	1521351706	Production	animats Resident	Double region crosser 1.03	Tridens	254976	263168	1.75239	92.4871	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066345
+82	1521351724	Production	animats Resident	Double region crosser 1.03	Congrua	254976	263424	89.0942	2.31915	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.2229
+83	1521351724	Production	animats Resident	Double region crosser 1.03	Congrua	254976	263424	89.095	2.32017	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067993
+84	1521351785	Production	animats Resident	Double region crosser 1.03	Congrua	254976	263424	196.189	177.67	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		7.12051
+85	1521351798	Production	animats Resident	Double region crosser 1.03	Epilais	255232	263424	1.32431	220.549	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		18.0288
+86	1521351799	Production	animats Resident	Double region crosser 1.03	Epilais	255232	263424	1.97579	220.965	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.069885
+87	1521351804	Production	animats Resident	Double region crosser 1.03	Morrison	255232	263680	49.6106	1.23574	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		0.996283
+88	1521351804	Production	animats Resident	Double region crosser 1.03	Morrison	255232	263680	49.6106	1.2194	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.062134
+89	1521351842	Production	animats Resident	Double region crosser 1.03	Paratrea	255488	263680	1.62393	162.281	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		12.1089
+90	1521351842	Production	animats Resident	Double region crosser 1.03	Paratrea	255488	263680	1.62319	162.284	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.072632
+91	1521351850	Production	animats Resident	Double region crosser 1.03	Nadata	255488	263936	99.0709	1.79257	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.2314
+92	1521351850	Production	animats Resident	Double region crosser 1.03	Nadata	255488	263936	99.4218	2.05577	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.044067
+93	1521351870	Production	animats Resident	Double region crosser 1.03	Riddings	255744	263936	1.83273	115.911	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.29752
+94	1521351870	Production	animats Resident	Double region crosser 1.03	Riddings	255744	263936	1.83403	115.911	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070862
+95	1521351931	Production	animats Resident	Double region crosser 1.03	Riddings	255744	263936	155.531	185.463	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		8.04021
+96	1521351952	Production	animats Resident	Double region crosser 1.03	Carmine	256000	263936	2.06599	182.958	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		17.0561
+97	1521351953	Production	animats Resident	Double region crosser 1.03	Carmine	256000	263936	2.06885	182.945	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.048401
+98	1521351965	Production	animats Resident	Double region crosser 1.03	Isabella	256000	264192	205.959	1.46182	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.3068
+99	1521351965	Production	animats Resident	Double region crosser 1.03	Isabella	256000	264192	206.696	1.72988	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067017
+100	1521351969	Production	animats Resident	Double region crosser 1.03	Cisseps	256256	264192	2.00555	16.3762	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.8518
+101	1521351969	Production	animats Resident	Double region crosser 1.03	Cisseps	256256	264192	2.0059	16.3759	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.03894
+102	1521351983	Production	animats Resident	Double region crosser 1.03	Orache	256512	264192	1.30415	49.9537	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.1916
+103	1521351983	Production	animats Resident	Double region crosser 1.03	Orache	256512	264192	1.27458	49.9891	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.075562
+104	1521352003	Production	animats Resident	Double region crosser 1.03	Muslin	256768	264192	2.13833	57.1645	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.1407
+105	1521352003	Production	animats Resident	Double region crosser 1.03	Muslin	256768	264192	3.41178	57.0558	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.07019
+106	1521352015	Production	animats Resident	Double region crosser 1.03	Sprawler	257024	264192	1.96596	13.8824	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		22.0364
+107	1521352015	Production	animats Resident	Double region crosser 1.03	Sprawler	257024	264192	1.96596	13.8824	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070557
+108	1521352024	Production	animats Resident	Double region crosser 1.03	Highflyer	257024	263936	38.8076	254.492	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		14.815
+109	1521352024	Production	animats Resident	Double region crosser 1.03	Highflyer	257024	263936	39.112	254.368	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067261
+110	1521352071	Production	animats Resident	Double region crosser 1.03	Herald	257280	263936	4.67411	147.117	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		17.2111
+111	1521352071	Production	animats Resident	Double region crosser 1.03	Herald	257280	263936	4.74163	146.515	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.045044
+112	1521352085	Production	animats Resident	Double region crosser 1.03	Brocade	257280	263680	174.57	252.277	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		13.3247
+113	1521352085	Production	animats Resident	Double region crosser 1.03	Brocade	257280	263680	175.848	249.829	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.17395
+114	1521352110	Production	animats Resident	Double region crosser 1.03	Dagger	257536	263680	1.59638	156.442	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.8777
+115	1521352110	Production	animats Resident	Double region crosser 1.03	Dagger	257536	263680	1.94758	155.591	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.0896
+116	1521352119	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	92.0151	252.437	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.1727
+117	1521352120	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	93.0196	250.582	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.071167
+118	1521352143	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	253.554	11.518	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	21.3359
+119	1521352143	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	254.711	10.037	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	21.3331
+120	1521352143	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	256.093	8.26458	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	21.3134
+121	1521352143	Production	animats Resident	Double region crosser 1.03	Epirrita	257536	263424	257.18	6.87298	e065cf9f1441d2e1b664c904f57505c256e97196	1	SLOW	Slowing for double region cross to	21.296
+122	1521352144	Production	animats Resident	Double region crosser 1.03	November	257792	263424	1.45694	6.51966	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.1815
+123	1521352144	Production	animats Resident	Double region crosser 1.03	November	257792	263424	2.00657	5.81751	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.024292
+124	1521352147	Production	animats Resident	Double region crosser 1.03	Serpentata	257792	263168	7.4709	254.895	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.67491
+125	1521352147	Production	animats Resident	Double region crosser 1.03	Serpentata	257792	263168	7.69399	254.658	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.086182
+126	1521352173	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	150.202	254.491	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		4.10402
+127	1521352174	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	150.202	254.491	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066895
+128	1521352201	Production	animats Resident	Double region crosser 1.03	Saturnia	258048	262912	1.2315	84.0622	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		14.674
+129	1521352201	Production	animats Resident	Double region crosser 1.03	Saturnia	258048	262912	1.2315	84.0622	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.073242
+130	1521352209	Production	animats Resident	Double region crosser 1.03	Bembecia	258048	262656	31.2217	254.032	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		1.54421
+131	1521352209	Production	animats Resident	Double region crosser 1.03	Bembecia	258048	262656	31.2217	254.032	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.046387
+132	1521352270	Production	animats Resident	Double region crosser 1.03	Bembecia	258048	262656	33.5196	247.712	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		10.9717
+133	1521352320	Production	animats Resident	Double region crosser 1.03	Hooktip	258048	262400	228.685	253.679	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		19.0136
+134	1521352320	Production	animats Resident	Double region crosser 1.03	Hooktip	258048	262400	229.319	253.137	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.092651
+135	1521352323	Production	animats Resident	Double region crosser 1.03	Tussock	258304	262400	3.20291	229.033	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.449
+136	1521352323	Production	animats Resident	Double region crosser 1.03	Tussock	258304	262400	3.56292	228.776	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.112183
+137	1521352384	Production	animats Resident	Double region crosser 1.03	Tussock	258304	262400	15.8843	218.542	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		11.634
+138	1521352428	Production	animats Resident	Double region crosser 1.03	Lanestris	258304	262656	107.717	1.93636	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.1945
+139	1521352428	Production	animats Resident	Double region crosser 1.03	Lanestris	258304	262656	107.501	3.89818	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.130615
+140	1521352489	Production	animats Resident	Double region crosser 1.03	Lanestris	258304	262656	110.438	129.937	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		12.0173
+141	1521352550	Production	animats Resident	Double region crosser 1.03	Lanestris	258304	262656	110.438	129.937	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		12.0173
+142	1521352562	Production	animats Resident	Double region crosser 1.03	Bembecia	258048	262656	253.472	118.475	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		12.3179
+143	1521352562	Production	animats Resident	Double region crosser 1.03	Bembecia	258048	262656	253.472	118.475	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.060303
+144	1521352611	Production	animats Resident	Double region crosser 1.03	Saturnia	258048	262912	32.5904	2.01995	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		19.2053
+145	1521352611	Production	animats Resident	Double region crosser 1.03	Saturnia	258048	262912	32.5904	2.01995	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.065186
+146	1521352620	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	254.968	86.6714	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		1.9138
+147	1521352620	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	254.975	86.692	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.07251
+148	1521352681	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	189.454	119.923	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		12.612
+149	1521352742	Production	animats Resident	Double region crosser 1.03	Pavonia	257792	262912	78.5053	96.9151	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		12.7927
+150	1521352764	Production	animats Resident	Double region crosser 1.03	Paranthrene	257792	262656	80.1851	254.674	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		4.78379
+151	1521352764	Production	animats Resident	Double region crosser 1.03	Paranthrene	257792	262656	80.1707	254.572	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.085083
+152	1521352803	Production	animats Resident	Double region crosser 1.03	Crenulate	257792	262400	117.691	254.392	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.76328
+153	1521352803	Production	animats Resident	Double region crosser 1.03	Crenulate	257792	262400	117.723	254.205	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.089478
+154	1521352842	Production	animats Resident	Double region crosser 1.03	Burnet	257792	262144	177.356	254.797	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.54296
+155	1521352842	Production	animats Resident	Double region crosser 1.03	Burnet	257792	262144	177.356	254.796	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.06311
+156	1521352868	Production	animats Resident	Double region crosser 1.03	Leafroller	258048	262144	1.06419	13.6519	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.08207
+157	1521352869	Production	animats Resident	Double region crosser 1.03	Leafroller	258048	262144	1.12436	13.5311	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.065674
+158	1521352873	Production	animats Resident	Double region crosser 1.03	Lappet	258048	261888	7.65256	254.549	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.29749
+159	1521352873	Production	animats Resident	Double region crosser 1.03	Lappet	258048	261888	7.65166	254.548	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.072632
+160	1521352912	Production	animats Resident	Double region crosser 1.03	Pini	258048	261632	74.6358	254.339	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.32496
+161	1521352912	Production	animats Resident	Double region crosser 1.03	Pini	258048	261632	74.6351	254.338	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.046997
+162	1521352952	Production	animats Resident	Double region crosser 1.03	Agirus	258048	261376	158.091	254.369	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.49566
+163	1521352952	Production	animats Resident	Double region crosser 1.03	Agirus	258048	261376	158.091	254.368	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.068481
+164	1521352983	Production	animats Resident	Double region crosser 1.03	Telea	258048	261120	252.47	254.546	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.21019
+165	1521352983	Production	animats Resident	Double region crosser 1.03	Telea	258048	261120	253.186	253.9	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.092407
+166	1521352986	Production	animats Resident	Double region crosser 1.03	Aglia	258304	261120	1.27194	250.515	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		6.70537
+167	1521352986	Production	animats Resident	Double region crosser 1.03	Aglia	258304	261120	1.27194	250.515	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.051392
+168	1521353047	Production	animats Resident	Double region crosser 1.03	Aglia	258304	261120	246.592	63.8416	e065cf9f1441d2e1b664c904f57505c256e97196	1	TICK		14.8295
+169	1521353049	Production	animats Resident	Double region crosser 1.03	Nessus	258560	261120	1.33808	54.1397	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.70228
+170	1521353049	Production	animats Resident	Double region crosser 1.03	Nessus	258560	261120	1.48273	53.9707	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.066162
+171	1521353062	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	95.338	254.885	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.03454
+172	1521353062	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	95.338	254.885	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.045166
+173	1521353082	Production	animats Resident	Double region crosser 1.03	Velox	258816	260864	1.7164	210.992	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.9645
+174	1521353082	Production	animats Resident	Double region crosser 1.03	Velox	258816	260864	1.8596	210.933	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067871
+175	1521353120	Production	animats Resident	Double region crosser 1.03	Tenera	259072	260864	1.6004	163.927	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.3349
+176	1521353120	Production	animats Resident	Double region crosser 1.03	Tenera	259072	260864	1.60119	163.927	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.092773
+177	1521353167	Production	animats Resident	Double region crosser 1.03	Crumbi	259328	260864	1.32356	173.265	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.18229
+178	1521353167	Production	animats Resident	Double region crosser 1.03	Crumbi	259328	260864	1.32356	173.265	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070068
+179	1521353196	Production	animats Resident	Double region crosser 1.03	Mocis	259584	260864	1.64459	171.543	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		12.3469
+180	1521353196	Production	animats Resident	Double region crosser 1.03	Mocis	259584	260864	1.64459	171.543	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.068359
+181	1521353233	Production	animats Resident	Double region crosser 1.03	Crumbi	259328	260864	254.939	25.8366	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		5.81958
+182	1521353233	Production	animats Resident	Double region crosser 1.03	Crumbi	259328	260864	254.939	25.8366	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.078369
+183	1521353259	Production	animats Resident	Double region crosser 1.03	Fishii	259328	260608	229.507	254.625	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.64468
+184	1521353259	Production	animats Resident	Double region crosser 1.03	Fishii	259328	260608	229.507	254.625	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.065918
+185	1521353285	Production	animats Resident	Double region crosser 1.03	Sylvia	259072	260608	254.49	195.396	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		11.4168
+186	1521353285	Production	animats Resident	Double region crosser 1.03	Sylvia	259072	260608	254.038	195.582	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.095703
+187	1521353297	Production	animats Resident	Double region crosser 1.03	Tenera	259072	260864	141.332	1.4309	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		11.0564
+188	1521353297	Production	animats Resident	Double region crosser 1.03	Tenera	259072	260864	141.332	1.4309	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067871
+189	1521353312	Production	animats Resident	Double region crosser 1.03	Velox	258816	260864	254.602	62.1689	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		11.6043
+190	1521353312	Production	animats Resident	Double region crosser 1.03	Velox	258816	260864	254.121	62.2354	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.092529
+191	1521353326	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	253.421	78.5007	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		20.6035
+192	1521353326	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	253.421	78.5007	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.065918
+193	1521353338	Production	animats Resident	Double region crosser 1.03	Albata	258304	260864	254.49	119.345	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.5394
+194	1521353338	Production	animats Resident	Double region crosser 1.03	Albata	258304	260864	253.51	119.555	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.06665
+195	1521353340	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	1.61765	118.858	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		17.0952
+196	1521353341	Production	animats Resident	Double region crosser 1.03	Celerio	258560	260864	1.6155	118.851	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.088135
+197	1521353347	Production	animats Resident	Double region crosser 1.03	Albata	258304	260864	254.896	117.174	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.17907
+198	1521353347	Production	animats Resident	Double region crosser 1.03	Albata	258304	260864	254.684	117.333	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.047363
+199	1521353362	Production	animats Resident	Double region crosser 1.03	Behrii	258048	260864	253.747	242.421	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.3658
+200	1521353362	Production	animats Resident	Double region crosser 1.03	Behrii	258048	260864	253.371	242.695	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.071289
+201	1521353365	Production	animats Resident	Double region crosser 1.03	Telea	258048	261120	232.791	3.19548	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		18.0795
+202	1521353365	Production	animats Resident	Double region crosser 1.03	Telea	258048	261120	232.678	3.28886	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.216797
+203	1521353396	Production	animats Resident	Double region crosser 1.03	Behrii	258048	260864	63.891	254.759	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.58891
+204	1521353397	Production	animats Resident	Double region crosser 1.03	Behrii	258048	260864	63.6156	254.451	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.044678
+205	1521353409	Production	animats Resident	Double region crosser 1.03	Hagen	257792	260864	254.865	190.425	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.59082
+206	1521353409	Production	animats Resident	Double region crosser 1.03	Hagen	257792	260864	254.771	190.325	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067139
+207	1521353439	Production	animats Resident	Double region crosser 1.03	Carolina	257792	260608	32.3461	254.829	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		0.62732
+208	1521353439	Production	animats Resident	Double region crosser 1.03	Carolina	257792	260608	32.3806	254.827	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.089844
+209	1521353448	Production	animats Resident	Double region crosser 1.03	Rustic	257536	260608	254.685	229.361	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.0357
+210	1521353448	Production	animats Resident	Double region crosser 1.03	Rustic	257536	260608	254.685	229.361	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.06665
+211	1521353478	Production	animats Resident	Double region crosser 1.03	Didugua	257280	260608	254.728	28.2229	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		1.05421
+212	1521353478	Production	animats Resident	Double region crosser 1.03	Didugua	257280	260608	254.712	28.2561	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.047607
+213	1521353515	Production	animats Resident	Double region crosser 1.03	Imperial	257280	260352	242.575	254.383	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.80816
+214	1521353515	Production	animats Resident	Double region crosser 1.03	Imperial	257280	260352	242.582	254.194	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.06958
+215	1521353553	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	221.537	254.604	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.4413
+216	1521353553	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	221.624	254.389	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.068604
+217	1521353565	Production	animats Resident	Double region crosser 1.03	Hera	257536	260096	1.15184	166.199	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.49818
+218	1521353566	Production	animats Resident	Double region crosser 1.03	Hera	257536	260096	1.21188	166.02	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.068359
+219	1521353583	Production	animats Resident	Double region crosser 1.03	Lebeau	257536	259840	9.90376	254.298	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.8007
+220	1521353583	Production	animats Resident	Double region crosser 1.03	Lebeau	257536	259840	9.90334	254.298	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.070312
+221	1521353634	Production	animats Resident	Double region crosser 1.03	Oculea	257280	259840	254.926	54.3808	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.75517
+222	1521353635	Production	animats Resident	Double region crosser 1.03	Oculea	257280	259840	254.897	54.2111	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.054688
+223	1521353663	Production	animats Resident	Double region crosser 1.03	Calleta	257280	259584	210.061	254.546	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		9.66714
+224	1521353664	Production	animats Resident	Double region crosser 1.03	Calleta	257280	259584	210.061	254.546	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.081543
+225	1521353697	Production	animats Resident	Double region crosser 1.03	Oculea	257280	259840	135.906	1.33435	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		10.008
+226	1521353698	Production	animats Resident	Double region crosser 1.03	Oculea	257280	259840	135.535	1.54068	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.502686
+227	1521353714	Production	animats Resident	Double region crosser 1.03	Agapema	257024	259840	254.792	108.995	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		8.82724
+228	1521353715	Production	animats Resident	Double region crosser 1.03	Agapema	257024	259840	254.689	109.012	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.067139
+229	1521353754	Production	animats Resident	Double region crosser 1.03	Velda	256768	259840	254.825	189.988	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		7.69284
+230	1521353754	Production	animats Resident	Double region crosser 1.03	Velda	256768	259840	254.901	189.935	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.094238
+231	1521353785	Production	animats Resident	Double region crosser 1.03	Zephyr	256512	259840	254.619	157.613	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		11.1786
+232	1521353785	Production	animats Resident	Double region crosser 1.03	Zephyr	256512	259840	254.579	157.604	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.111572
+233	1521353806	Production	animats Resident	Double region crosser 1.03	Grote	256512	260096	205.594	2.07778	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.3752
+234	1521353807	Production	animats Resident	Double region crosser 1.03	Grote	256512	260096	205.58	2.34265	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.052246
+235	1521353826	Production	animats Resident	Double region crosser 1.03	Electra	256768	260096	2.23041	146.869	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		16.7142
+236	1521353827	Production	animats Resident	Double region crosser 1.03	Electra	256768	260096	2.88376	146.726	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.068115
+237	1521353840	Production	animats Resident	Double region crosser 1.03	Burns	257024	260096	1.60366	112.663	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		21.1116
+238	1521353840	Production	animats Resident	Double region crosser 1.03	Burns	257024	260096	2.51672	112.527	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.028564
+239	1521353872	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	1.40194	67.2792	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSSPEED		4.28889
+240	1521353872	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	1.54896	67.195	e065cf9f1441d2e1b664c904f57505c256e97196	1	CROSSEND	Region crossing complete in	0.042725
+241	1521353880	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	6.63188	53.862	e065cf9f1441d2e1b664c904f57505c256e97196	1	RIDERCOUNT		0
+242	1521353880	Production	animats Resident	Double region crosser 1.03	Neumoegen	257280	260096	6.63188	53.862	e065cf9f1441d2e1b664c904f57505c256e97196	1	SHUTDOWN	Distance traveled (km)	21.2551
