@@ -78,9 +78,9 @@ func dumprequest(sv FastCGIServer, w http.ResponseWriter, req *http.Request, bod
 func (sv FastCGIServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	body := make([]byte, 5000) // buffer for body, which should not be too big
 	if req.Body != nil {
-		len, _ := req.Body.Read(body)           // body of HTTP request
-		bodycontent := body[0:len]              // take correct part of buffer
-		Handlerequest(sv, w, bodycontent, req)  // handle request
+		len, _ := req.Body.Read(body)          // body of HTTP request
+		bodycontent := body[0:len]             // take correct part of buffer
+		Handlerequest(sv, w, bodycontent, req) // handle request
 	}
 }
 

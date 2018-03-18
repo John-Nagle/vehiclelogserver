@@ -200,17 +200,19 @@ func Parseheader(headervars http.Header) (slheader, error) {
 func Parsevehevent(s []byte) (vehlogevent, error) {
 	var ev vehlogevent
 	err := json.Unmarshal(s, &ev) // decode JSON
-	if err != nil {return ev,err}
-	if len(ev.Tripid) != 40 {   // must be length of SHA1 hash in hex
-	    return ev, errors.New(fmt.Sprintf("Trip ID \"%s\" from Second Life was not 40 bytes long", ev.Tripid))
+	if err != nil {
+		return ev, err
+	}
+	if len(ev.Tripid) != 40 { // must be length of SHA1 hash in hex
+		return ev, errors.New(fmt.Sprintf("Trip ID \"%s\" from Second Life was not 40 bytes long", ev.Tripid))
 	}
 	return ev, err
 }
 
 func Hashwithtoken(token []byte, s []byte) string { // our SHA1 validation - must match SL's only secure hash algorithm
 	valforhash := append([]byte(token), s...)
-	hash := sha1.Sum(valforhash)                                  // compute hash as binary bytes
-	hashhex := hex.EncodeToString(hash[:])                        // convert to hex to match SL
+	hash := sha1.Sum(valforhash)           // compute hash as binary bytes
+	hashhex := hex.EncodeToString(hash[:]) // convert to hex to match SL
 	return hashhex
 }
 
@@ -311,7 +313,7 @@ func Handlerequest(sv FastCGIServer, w http.ResponseWriter, bodycontent []byte, 
 	if err != nil {
 		w.WriteHeader(500)           // internal server error
 		w.Write([]byte(err.Error())) // report error as text ***TEMP***
-	    w.Write([]byte("\n"))
-		dumprequest(sv, w, req, bodycontent)  // dump entire request as text ***TEMP***
+		w.Write([]byte("\n"))
+		dumprequest(sv, w, req, bodycontent) // dump entire request as text ***TEMP***
 	}
 }
