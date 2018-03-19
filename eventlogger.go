@@ -234,7 +234,7 @@ func Validateauthtoken(s []byte, name string, value string, config vdbconfig) er
 }
 
 func insertevent(db *sql.DB, hdr slheader, ev vehlogevent) error {
-	var insstmt string = "INSERT INTO events  (time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	var insstmt string = "INSERT INTO events  (time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, local_position_z, tripid, severity, eventtype, msg, auxval, serial)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err := db.Exec(insstmt,
 		ev.Timestamp,
 		hdr.Shard,
@@ -245,6 +245,7 @@ func insertevent(db *sql.DB, hdr slheader, ev vehlogevent) error {
 		hdr.Region.Y,
 		hdr.Local_position.X,
 		hdr.Local_position.Y,
+		hdr.Local_position.Z,
 		ev.Tripid,
 		ev.Severity,
 		ev.Eventtype,

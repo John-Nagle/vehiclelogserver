@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS events (
 	region_corner_Y   INT NOT NULL,	            -- corner of region
 	local_position_x  FLOAT NOT NULL,           -- X and Y only
 	local_position_y  FLOAT NOT NULL,           -- X and Y only
+	local_position_z  FLOAT NOT NULL DEFAULT -1.0,   -- turns out we need Z to detect falls
 	tripid          CHAR(40) NOT NULL,          -- trip ID (random unique identifier)
 	severity        TINYINT NOT NULL,           -- an enum, really
 	eventtype       VARCHAR(20) NOT NULL,       -- STARTUP, SHUTDOWN, etc.
