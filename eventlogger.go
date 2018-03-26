@@ -268,7 +268,7 @@ func inserttodo(db *sql.DB, tripid string) error {
 //  dbupdate -- do the database updates to insert an event
 //
 func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
-	_, err := db.Exec("BEGIN") // updating events and tripstodo
+	tx, err := db.Begin() // updating events and tripstodo
 	if err != nil {
 		return err
 	}
@@ -276,11 +276,11 @@ func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
 	if err == nil {
 		err = inserttodo(db, ev.Tripid)
 		if err == nil {
-			_, err = db.Exec("COMMIT")
+			err = tx.Commit() // success
 		} // all OK, commit
 	}
 	if err != nil {
-		_, _ = db.Exec("ROLLBACK")
+		_ = tx.Rollback() // fail, undo
 	}
 	return err
 }

@@ -16,8 +16,8 @@ import (
 //
 //  Constants
 //
-const runEverySecs = 30      // run this no more than once per N seconds
-const minSummarizeSecs = 120 // summarize if oldest event is older than this
+const runEverySecs = 30                      // run this no more than once per N seconds
+const minSummarizeSecs = 120                 // summarize if oldest event is older than this
 const Format3339Nano = "2006-01-02 15:04:05" // ought to be predefined
 //
 //  Static variables
@@ -27,7 +27,7 @@ var lastSummarizeTime time.Time // last time we ran summarization. Zero at init
 //
 //  doonetrpiid  -- handle one trip ID
 //
-func doonetripid(tripid string, stamp time.Time, verbose bool) error {
+func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error {
 	if verbose {
 		fmt.Printf("Summarizing trip %s (%s)\n", tripid, stamp)
 	}
@@ -52,7 +52,7 @@ func dosummarize(db *sql.DB, verbose bool) error {
 	for { // unti no more work to do
 		//  Get earliest tripid at least minSummarizeSeconds old
 		row := db.QueryRow("SELECT tripid, stamp FROM tripstodo WHERE TIMESTAMPDIFF(SECOND, stamp, NOW()) > ? ORDER BY stamp LIMIT 1", minSummarizeSecs)
-		var tripid string   // trip ID to be processed
+		var tripid string // trip ID to be processed
 		var stampstr string
 		err := row.Scan(&tripid, &stampstr)
 		if err == sql.ErrNoRows {
@@ -71,7 +71,7 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		if err != nil {
 			return err
 		}
-		err = doonetripid(tripid, stamp, verbose)
+		err = doonetripid(db, tripid, stamp, verbose)
 		if err != nil {
 			return err
 		}
