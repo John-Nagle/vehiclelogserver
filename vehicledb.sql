@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS errorlog (
 --  tripstodo  -- trip IDs in events not yet summarized to trips
 --  
 CREATE TABLE IF NOT EXISTS tripstodo (
-    tripid          CHAR(40) NOT NULL PRIMARY KEY,      -- trip ID if relevant
+    tripid          CHAR(40) NOT NULL PRIMARY KEY,      -- trip ID 
     stamp           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- last update
 ) ENGINE InnoDB;
 

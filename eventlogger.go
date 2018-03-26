@@ -1,5 +1,5 @@
 //
-//  Package eventlogger -- adds events to the "event" table of the vehicle database
+//  eventlogger -- adds events to the "event" table of the vehicle database
 //
 //  Animats
 //  March, 2018

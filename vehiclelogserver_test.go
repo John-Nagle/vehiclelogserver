@@ -205,9 +205,6 @@ func TestEventLog(t *testing.T) {
 	}
 	//  Basic parsing test
 	//  Make a unique trip ID - 40 chars of hex
-	///tripid1 := fmt.Sprintf("%d",(rand.Int63()))                                 // 63-bit random number
-	////triphash := sha1.Sum([]byte(tripid1))                                       // compute hash as binary bytes
-	////tripid := hex.EncodeToString(triphash[:])                                   // convert to hex to match SL
 	tripid := GenerateRandomTripid()
 	testjson := []byte(strings.Replace(testjson1, "TRIPID", tripid, 1)) // fill in a new trip ID
 	//  Build properly signed test JSON
@@ -218,7 +215,6 @@ func TestEventLog(t *testing.T) {
 	hash := Hashwithtoken([]byte(token[:]), testjson)
 	var hashes []string
 	hashes = append(hashes, string(hash))
-	////testheader1["X-Authtoken-Hash"] = hashes
 	SignLogMsg(testjson, testheader1, testtokenname)
 	err := Addevent(testjson, testheader1, testsv.config, testsv.db) // call with no database
 	if err != nil {
@@ -240,4 +236,13 @@ func TestEventLogFromFile(t *testing.T) {
 			return
 		}
 	}
+}
+
+func TestSummarize(t *testing.T) {
+    err := dosummarize(testsv.db, true)
+    if err != nil {
+		t.Errorf(err.Error())
+		return
+		}
+
 }
