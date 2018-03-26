@@ -10,6 +10,7 @@ import (
 	"database/sql"
 	////"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -17,7 +18,7 @@ import (
 //  Constants
 //
 const runEverySecs = 30                      // run this no more than once per N seconds
-const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this
+const minSummarizeSecs = 5                   ////120                 // summarize if oldest event is older than this
 const Format3339Nano = "2006-01-02 15:04:05" // ought to be predefined
 //
 //  Static variables
@@ -31,25 +32,46 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 	if verbose {
 		fmt.Printf("Summarizing trip %s (%s)\n", tripid, stamp)
 	}
-    //  Read events for this trip in serial order
-    rows, err := db.Query("SELECT time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, local_position_z, severity, eventtype, msg, auxval, serial FROM events WHERE tripid = ? ORDER BY serial", tripid)
+	//  Read events for this trip in serial order
+	rows, err := db.Query("SELECT time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, local_position_z, severity, eventtype, msg, auxval, serial FROM events WHERE tripid = ? ORDER BY serial", tripid)
 	if err != nil {
 		return err
 	}
-    defer rows.Close()
-    for rows.Next () {                          // over all rows
-        var event vehlogevent
-        var hdr slheader   
-        err = rows.Scan(&event.Timestamp, &hdr.Shard, &hdr.Owner_name, &hdr.Object_name, &hdr.Region.Name, &hdr.Region.X, &hdr.Region.Y, 
-            &hdr.Local_position.X, &hdr.Local_position.Y, &hdr.Local_position.Z, 
-            &event.Severity, &event.Eventtype, &event.Msg, &event.Auxval, &event.Serial)
-        if verbose {
-            fmt.Printf("%4d. %12s %s %s %s %f\n", event.Serial, event.Eventtype, hdr.Region.Name, hdr.Local_position, event.Msg, event.Auxval)
-        }
-    }
-    //  ***SUMMARIZE AND UPDATE***
-    _, err = db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
-	    
+	defer rows.Close()
+	var first bool = true // first
+	var firstevent vehlogevent
+	var lastevent vehlogevent
+	var maxseverity int8 = 0 // highest severity seen
+	var trouble = false
+	for rows.Next() { // over all rows
+		var event vehlogevent
+		var hdr slheader
+		err = rows.Scan(&event.Timestamp, &hdr.Shard, &hdr.Owner_name, &hdr.Object_name, &hdr.Region.Name, &hdr.Region.X, &hdr.Region.Y,
+			&hdr.Local_position.X, &hdr.Local_position.Y, &hdr.Local_position.Z,
+			&event.Severity, &event.Eventtype, &event.Msg, &event.Auxval, &event.Serial)
+		if verbose {
+			fmt.Printf("%4d. %12s %s %s %s %f\n", event.Serial, event.Eventtype, hdr.Region.Name, hdr.Local_position, event.Msg, event.Auxval)
+		}
+		//  Save first and last events
+		if first {
+			firstevent = event
+			first = false
+		}
+		lastevent = event
+		if event.Severity > maxseverity {
+			maxseverity = event.Severity
+		}
+		trouble = trouble || strings.Contains(event.Eventtype, "FAIL") || strings.Contains(event.Eventtype, "ERR")
+	}
+	//  ***SUMMARIZE AND UPDATE***
+	trouble = trouble || firstevent.Eventtype != "STARTUP" // if first is not shutdown
+	trouble = trouble || lastevent.Eventtype != "SHUTDOWN" // if last is not shutdown, trouble
+	trouble = trouble || maxseverity > 1                   // if any anomalies
+	if verbose {
+		fmt.Printf("%s to %s. Trouble=%t Max severity=%d\n", firstevent.Eventtype, lastevent.Eventtype, trouble, maxseverity)
+	}
+	_, err = db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
+
 	return err
 }
 
@@ -69,7 +91,7 @@ func dosummarize(db *sql.DB, verbose bool) error {
 
 	for { // unti no more work to do
 		//  Get earliest tripid at least minSummarizeSeconds old.
-		//  We do this one at a time because there might be other summarizers running. 
+		//  We do this one at a time because there might be other summarizers running.
 		row := db.QueryRow("SELECT tripid, stamp FROM tripstodo WHERE TIMESTAMPDIFF(SECOND, stamp, NOW()) > ? ORDER BY stamp LIMIT 1", minSummarizeSecs)
 		var tripid string // trip ID to be processed
 		var stampstr string
