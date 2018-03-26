@@ -206,7 +206,7 @@ func TestEventLog(t *testing.T) {
 	//  Basic parsing test
 	//  Make a unique trip ID - 40 chars of hex
 	tripid := GenerateRandomTripid()
-	testjson := []byte(strings.Replace(testjson1, "TRIPID", tripid, 1)) // fill in a new trip ID
+	testjson := []byte(strings.Replace(string(testjson2), "TRIPID", tripid, 1)) // fill in a new trip ID
 	//  Build properly signed test JSON
 	var testkey []string
 	testkey = append(testkey, "MAR2018")

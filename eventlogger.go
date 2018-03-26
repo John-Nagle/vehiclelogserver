@@ -277,6 +277,10 @@ func dbupdate(db *sql.DB, hdr slheader, ev vehlogevent) error {
 		err = inserttodo(db, ev.Tripid)
 		if err == nil {
 			err = tx.Commit() // success
+			if err != nil {
+				return err
+			}
+
 		} // all OK, commit
 	}
 	if err != nil {
