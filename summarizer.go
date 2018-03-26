@@ -8,7 +8,7 @@ package main
 
 import (
 	"database/sql"
-	////"errors"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -31,6 +31,7 @@ func doonetripid(tripid string, stamp time.Time, verbose bool) error {
 	if verbose {
 		fmt.Printf("Summarizing trip %s (%s)\n", tripid, stamp)
 	}
+	return errors.New("Not implemented yet.")
 	return nil
 }
 
