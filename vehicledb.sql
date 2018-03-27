@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS trips (
     owner_name      VARCHAR(255) NOT NULL,      -- name of owner
     grid_name       VARCHAR(255) NOT NULL,      -- grid name
 	object_name     VARCHAR(255) NOT NULL,      -- object name
+	driver_key      CHAR(36) NOT NULL,          -- driver avatar key if available
 	driver_name     VARCHAR(255) NOT NULL,      -- name of driver
 	driver_display_name VARCHAR(255) NOT NULL,  -- display name of driver
 	
@@ -81,5 +82,6 @@ CREATE TABLE IF NOT EXISTS trips (
 	msg             TEXT,                       -- message if any
 	INDEX(driver_name),
 	INDEX(trip_status),
-	INDEX(tripid)
+	INDEX(driver_key),
+	UNIQUE INDEX(tripid)
 ) ENGINE InnoDB;

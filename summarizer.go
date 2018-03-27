@@ -17,8 +17,10 @@ import (
 //
 //  Constants
 //
-const runEverySecs = 30    // run this no more than once per N seconds
-const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this ***TEMP***
+const runEverySecs = 30      // run this no more than once per N seconds
+const minSummarizeSecs = 5   ////120                 // summarize if oldest event is older than this ***TEMP***
+const keeplasteventtypes = 6 // keep this many event types in log
+
 //
 //  Static variables
 //
@@ -43,6 +45,7 @@ type tripsummary struct {
 	owner_name          string      // name of owner
 	shard               string      // grid name
 	object_name         string      // object name
+	driver_key          string      // 36 chars of key, may be empty
 	driver_name         string      // name of driver
 	driver_display_name string      // display name of driver
 	distance            float64     // distance traveled, from client
@@ -69,6 +72,77 @@ func (r trip) String() string {
 	return fmt.Sprintf("%s  distance from events %1.2fkm",
 		r.sx,
 		r.event_distance/1000.0)
+}
+
+//
+//  inserttrip -- insert trip info in database
+//
+//  Ignore duplicates
+//
+func inserttrip(db *sql.DB, r tripsummary) error {
+	//   Convert last eventtypes into TYPE-TYPE-TYPE for SQL
+	const insstmt string = "INSERT IGNORE INTO trips (stamp, elapsed, tripid, owner_name, shard, object_name, driver_key, driver_name, driver_display_name, distance, regions_crossed, trip_status, data_status, severity, start_region_name, end_region_name, min_pos_x, min_pos_y, max_pos_x, max_pos_y, last_eventtypes, msg) VALUES (? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?)"
+	_, err := db.Exec(insstmt,
+		r.stamp,
+		r.elapsed,
+		r.tripid,
+		r.owner_name,
+		r.shard,
+		r.object_name,
+		r.driver_key,
+		r.driver_name,
+		r.driver_display_name,
+		r.distance,
+		r.regions_crossed,
+		r.trip_status,
+		r.data_status,
+		r.severity,
+		r.start_region_name,
+		r.end_region_name,
+		r.min_pos.X,
+		r.min_pos.Y,
+		r.max_pos.X,
+		r.max_pos.Y,
+		strings.Join(r.last_eventtypes, ",  "),
+		r.msg)
+	return err
+}
+
+//
+//  deletetodo  -- delete to-do entry from to-do list
+//
+func deletetodo(db *sql.DB, tripid string) error {
+	_, err := db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
+	return (err)
+}
+
+//
+//  updatetripdb  -- update trip database from trip record
+//
+//  Also deletes corresponding record from tripstodo.
+//
+//  Duplicate tripid - ignore update
+//
+func updatetripdb(db *sql.DB, r tripsummary) error {
+	tx, err := db.Begin() // updating events and tripstodo
+	if err != nil {
+		return err
+	}
+	err = inserttrip(db, r)
+	if err == nil {
+		err = deletetodo(db, r.tripid)
+		if err == nil {
+			err = tx.Commit() // success
+			if err != nil {
+				return err
+			}
+
+		} // all OK, commit
+	}
+	if err != nil {
+		_ = tx.Rollback() // fail, undo
+	}
+	return err
 }
 
 //
@@ -103,6 +177,14 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 		r.prevpos = gpos
 
 	}
+	//  Special cases
+	if event.Eventtype == "DRIVERKEY" { // DRIVERKEY event contains key in msg field
+		key := strings.TrimSpace(event.Msg) // compatibility with 2018 name change plan
+		if len(key) == 36 && r.sx.driver_key == "" {
+			r.sx.driver_key = key // save key
+		}
+	}
+
 	//  For all records
 	//  Consistency checks
 	consistent := hdr.Owner_name == r.sx.owner_name && hdr.Object_name == r.sx.object_name &&
@@ -171,11 +253,13 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 			tr.sx.trip_status = "NOSHUTDOWN" // log ended incomplete
 		}
 	}
+	if len(tr.sx.last_eventtypes) > keeplasteventtypes {
+		tr.sx.last_eventtypes = tr.sx.last_eventtypes[len(tr.sx.last_eventtypes)-keeplasteventtypes:] // keep last N
+	}
 	if verbose {
 		fmt.Printf("Summary: %s\n", tr)
 	}
-	_, err = db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
-
+	err = updatetripdb(db, tr.sx) // update the database
 	return err
 }
 
@@ -198,7 +282,6 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		//  We do this one at a time because there might be other summarizers running.
 		row := db.QueryRow("SELECT tripid, stamp FROM tripstodo WHERE TIMESTAMPDIFF(SECOND, stamp, NOW()) > ? ORDER BY stamp LIMIT 1", minSummarizeSecs)
 		var tripid string // trip ID to be processed
-		////var stampstr string
 		var stamp time.Time
 		err := row.Scan(&tripid, &stamp)
 		if err == sql.ErrNoRows {
@@ -213,10 +296,6 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		if err != nil {
 			return err
 		}
-		////stamp, err := time.Parse(Format3339Nano, stampstr)
-		////if err != nil {
-		////	return err
-		////}
 		err = doonetripid(db, tripid, stamp, verbose)
 		if err != nil {
 			return err
