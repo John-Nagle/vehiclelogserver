@@ -18,7 +18,7 @@ import (
 //  Constants
 //
 const runEverySecs = 30    // run this no more than once per N seconds
-const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this
+const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this ***TEMP***
 //
 //  Types
 //
@@ -27,6 +27,9 @@ type trip struct {
 	eventtype      string      // type of event
 	prevpos        slglobalpos // global position
 	event_distance float64     // distance computed from events as check
+	sx  tripsummary         // trip summary to go to database
+}	
+type tripsummary struct {
 
 	// trip summary data
 	stamp               time.Time   // end time of trip
@@ -50,11 +53,17 @@ type trip struct {
 	msg                 string      // message if any
 }
 
-func (r trip) String() string {
-	return fmt.Sprintf("driver_name: \"%s\"  object_name: \"%s\"  status: %s  data: %s  regions: %d  distance from events %1.2fkm",
+func (r tripsummary) String() string {
+	return fmt.Sprintf("driver_name: \"%s\"  object_name: \"%s\"  status: %s  data: %s  regions: %d",
 		r.driver_name, r.object_name,
 		r.trip_status, r.data_status,
-		r.regions_crossed, r.event_distance/1000.0)
+		r.regions_crossed)
+}
+
+func (r trip) String() string {
+	return fmt.Sprintf("%s  distance from events %1.2fkm",
+		r.sx,
+		r.event_distance/1000.0)
 }
 
 //
@@ -65,52 +74,52 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 	gpos.Set(hdr.Region, hdr.Local_position) // where we are
 	if first {                               // first record, must be "STARTUP"
 		if event.Eventtype != "STARTUP" || event.Serial != 0 { // not a good first record
-			r.data_status = "MISSING"
+			r.sx.data_status = "MISSING"
 		} else {
-			r.data_status = "OK"
-			r.object_name = hdr.Object_name
-			r.owner_name = hdr.Owner_name
-			r.object_name = hdr.Object_name
-			r.shard = hdr.Shard
+			r.sx.data_status = "OK"
+			r.sx.object_name = hdr.Object_name
+			r.sx.owner_name = hdr.Owner_name
+			r.sx.object_name = hdr.Object_name
+			r.sx.shard = hdr.Shard
 			names := strings.SplitN(event.Msg, "/", 2) // split into legacy name / display name
 			if len(names) == 2 {
-				r.driver_name = names[0]
-				r.driver_display_name = names[1]
+				r.sx.driver_name = names[0]
+				r.sx.driver_display_name = names[1]
 			}
 		}
-		r.trip_status = "OK"
-		r.regions_crossed = 0
+		r.sx.trip_status = "OK"
+		r.sx.regions_crossed = 0
 		r.event_distance = 0.0
 		r.serial = -1
-		r.severity = event.Severity
-		r.start_region_name = hdr.Region.Name
-		r.min_pos = gpos // update corners of area traveled
-		r.max_pos = gpos
+		r.sx.severity = event.Severity
+		r.sx.start_region_name = hdr.Region.Name
+		r.sx.min_pos = gpos // update corners of area traveled
+		r.sx.max_pos = gpos
 		r.prevpos = gpos
 
 	}
 	//  For all records
 	//  Consistency checks
-	consistent := hdr.Owner_name == r.owner_name && hdr.Object_name == r.object_name &&
-		hdr.Shard == r.shard
+	consistent := hdr.Owner_name == r.sx.owner_name && hdr.Object_name == r.sx.object_name &&
+		hdr.Shard == r.sx.shard
 	sequential := r.serial+1 == event.Serial // should be in sequence
-	if r.data_status == "OK" && !consistent {
-		r.data_status = "INCONSISTENT"
+	if r.sx.data_status == "OK" && !consistent {
+		r.sx.data_status = "INCONSISTENT"
 	}
-	if r.data_status == "OK" && !sequential {
-		r.data_status = "MISSING"
+	if r.sx.data_status == "OK" && !sequential {
+		r.sx.data_status = "MISSING"
 	}
 	r.serial = event.Serial
 	//  Distance calc
-	if hdr.Region.Name != r.end_region_name { // region crossing
-		r.regions_crossed++ // tally
+	if hdr.Region.Name != r.sx.end_region_name { // region crossing
+		r.sx.regions_crossed++ // tally
 	}
-	r.end_region_name = hdr.Region.Name
-	r.min_pos.Min(gpos) // update corners of area traveled
-	r.max_pos.Max(gpos)
+	r.sx.end_region_name = hdr.Region.Name
+	r.sx.min_pos.Min(gpos) // update corners of area traveled
+	r.sx.max_pos.Max(gpos)
 	r.event_distance += r.prevpos.Distance(gpos)                   // accumulate distance
 	r.prevpos = gpos                                               // previous position
-	r.last_eventtypes = append(r.last_eventtypes, event.Eventtype) // recent event types (could truncate this)
+	r.sx.last_eventtypes = append(r.sx.last_eventtypes, event.Eventtype) // recent event types (could truncate this)
 }
 
 //
