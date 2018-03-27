@@ -56,10 +56,9 @@ CREATE TABLE IF NOT EXISTS tripstodo (
 --
 --  trips -- info about trips
 --
---  ***NEEDS WORK*** Dreamhost server doesn't do spatial indices.
---
 CREATE TABLE IF NOT EXISTS trips (
-    date            TIMESTAMP NOT NULL,         -- time of trip
+    stamp           TIMESTAMP NOT NULL,         -- end time of trip
+    elapsed         INT NOT NULL,               -- elapsed time
     tripid          CHAR(40) NOT NULL,          -- ID of trip
     owner_name      VARCHAR(255) NOT NULL,      -- name of owner
     grid_name       VARCHAR(255) NOT NULL,      -- grid name
@@ -67,17 +66,20 @@ CREATE TABLE IF NOT EXISTS trips (
 	driver_name     VARCHAR(255) NOT NULL,      -- name of driver
 	driver_display_name VARCHAR(255) NOT NULL,  -- display name of driver
 	
-	distance        FLOAT NOT NULL,             -- distance traveled
+	distance        FLOAT NOT NULL,             -- distance traveled, from client
 	regions_crossed INT NOT NULL,               -- number of region crossings
-	regions_entered INT NOT NULL,               -- number of regions entered
-	trip_status     ENUM("OK","FAULT","NOSHUTDOWN"), -- how did trip end?   
-	start_pos       POINT NOT NULL,             -- starting position
-	end_pos         POINT NOT NULL,             -- ending position
-	sw_corner       POINT NOT NULL,             -- lower left limit of travel
-	ne_corner       POINT NOT NULL,             -- upper right limit of travel
+	trip_status     ENUM("OK","FAULT","NOSHUTDOWN"), -- how did trip end?
+	data_status     ENUM("OK","MISSING","INCONSISTENT"), -- data problems  
+	severity        TINYINT NOT NULL,           -- worst severity level 
+	start_region_name VARCHAR(255) NOT NULL,    -- starting region
+	end_region_name VARCHAR(255) NOT NULL,      -- ending region
+	min_x           FLOAT NOT NULL,             -- min X value, global
+	min_y           FLOAT NOT NULL,             -- min Y value, global
+	max_x           FLOAT NOT NULL,             -- max X value, global
+    max_y           FLOAT NOT NULL,             -- max Y value, global
+    last_eventtypes TEXT,                       -- last N event types recorded
 	msg             TEXT,                       -- message if any
 	INDEX(driver_name),
-	SPATIAL INDEX(sw_corner),
-	SPATIAL INDEx(ne_corner)
-
+	INDEX(trip_status),
+	INDEX(tripid)
 ) ENGINE InnoDB;

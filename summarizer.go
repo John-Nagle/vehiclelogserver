@@ -1,5 +1,5 @@
 //
-//  summarizer  -- summarize vehicle log events into a summary file
+//  summarizer --  summarize vehicle log events into a summary file
 //
 //  Animats
 //  March, 2018
@@ -17,9 +17,102 @@ import (
 //
 //  Constants
 //
-const runEverySecs = 30                      // run this no more than once per N seconds
-const minSummarizeSecs = 5                   ////120                 // summarize if oldest event is older than this
-const Format3339Nano = "2006-01-02 15:04:05" // ought to be predefined
+const runEverySecs = 30    // run this no more than once per N seconds
+const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this
+//
+//  Types
+//
+type trip struct {
+	serial         int32       // record serial number
+	eventtype      string      // type of event
+	prevpos        slglobalpos // global position
+	event_distance float64     // distance computed from events as check
+
+	// trip summary data
+	stamp               time.Time   // end time of trip
+	elapsed             int32       // elapsed time
+	tripid              string      // ID of trip
+	owner_name          string      // name of owner
+	shard               string      // grid name
+	object_name         string      // object name
+	driver_name         string      // name of driver
+	driver_display_name string      // display name of driver
+	distance            float64     // distance traveled, from client
+	regions_crossed     int32       // number of region crossings
+	trip_status         string      // ENUM("OK","FAULT","NOSHUTDOWN"), // how did trip end?
+	data_status         string      // ENUM("OK","MISSING","INCONSISTENT"), // data problems
+	severity            int8        // worst severity level
+	start_region_name   string      // starting region
+	end_region_name     string      // ending region
+	min_pos             slglobalpos // min X value, global
+	max_pos             slglobalpos // max X value, global
+	last_eventtypes     []string    // last N event types recorded
+	msg                 string      // message if any
+}
+
+func (r trip) String() string {
+	return fmt.Sprintf("driver_name: \"%s\"  object_name: \"%s\"  status: %s  data: %s  regions: %d  distance from events %1.2fkm",
+		r.driver_name, r.object_name,
+		r.trip_status, r.data_status,
+		r.regions_crossed, r.event_distance/1000.0)
+}
+
+//
+//  update trip object given a log entry
+
+func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
+	var gpos slglobalpos
+	gpos.Set(hdr.Region, hdr.Local_position) // where we are
+	if first {                               // first record, must be "STARTUP"
+		if event.Eventtype != "STARTUP" || event.Serial != 0 { // not a good first record
+			r.data_status = "MISSING"
+		} else {
+			r.data_status = "OK"
+			r.object_name = hdr.Object_name
+			r.owner_name = hdr.Owner_name
+			r.object_name = hdr.Object_name
+			r.shard = hdr.Shard
+			names := strings.SplitN(event.Msg, "/", 2) // split into legacy name / display name
+			if len(names) == 2 {
+				r.driver_name = names[0]
+				r.driver_display_name = names[1]
+			}
+		}
+		r.trip_status = "OK"
+		r.regions_crossed = 0
+		r.event_distance = 0.0
+		r.serial = -1
+		r.severity = event.Severity
+		r.start_region_name = hdr.Region.Name
+		r.min_pos = gpos // update corners of area traveled
+		r.max_pos = gpos
+		r.prevpos = gpos
+
+	}
+	//  For all records
+	//  Consistency checks
+	consistent := hdr.Owner_name == r.owner_name && hdr.Object_name == r.object_name &&
+		hdr.Shard == r.shard
+	sequential := r.serial+1 == event.Serial // should be in sequence
+	if r.data_status == "OK" && !consistent {
+		r.data_status = "INCONSISTENT"
+	}
+	if r.data_status == "OK" && !sequential {
+		r.data_status = "MISSING"
+	}
+	r.serial = event.Serial
+	//  Distance calc
+	if hdr.Region.Name != r.end_region_name { // region crossing
+		r.regions_crossed++ // tally
+	}
+	r.end_region_name = hdr.Region.Name
+	r.min_pos.Min(gpos) // update corners of area traveled
+	r.max_pos.Max(gpos)
+	r.event_distance += r.prevpos.Distance(gpos)                   // accumulate distance
+	r.prevpos = gpos                                               // previous position
+	r.last_eventtypes = append(r.last_eventtypes, event.Eventtype) // recent event types (could truncate this)
+}
+
 //
 //  Static variables
 //
@@ -38,8 +131,8 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 		return err
 	}
 	defer rows.Close()
+	var tr trip           // working trip
 	var first bool = true // first
-	var firstevent vehlogevent
 	var lastevent vehlogevent
 	var maxseverity int8 = 0 // highest severity seen
 	var trouble = false
@@ -52,11 +145,9 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 		if verbose {
 			fmt.Printf("%4d. %12s %s %s %s %f\n", event.Serial, event.Eventtype, hdr.Region.Name, hdr.Local_position, event.Msg, event.Auxval)
 		}
+		tr.updatefromevent(event, hdr, first)
 		//  Save first and last events
-		if first {
-			firstevent = event
-			first = false
-		}
+		first = false
 		lastevent = event
 		if event.Severity > maxseverity {
 			maxseverity = event.Severity
@@ -64,11 +155,11 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 		trouble = trouble || strings.Contains(event.Eventtype, "FAIL") || strings.Contains(event.Eventtype, "ERR")
 	}
 	//  ***SUMMARIZE AND UPDATE***
-	trouble = trouble || firstevent.Eventtype != "STARTUP" // if first is not shutdown
 	trouble = trouble || lastevent.Eventtype != "SHUTDOWN" // if last is not shutdown, trouble
 	trouble = trouble || maxseverity > 1                   // if any anomalies
 	if verbose {
-		fmt.Printf("%s to %s. Trouble=%t Max severity=%d\n", firstevent.Eventtype, lastevent.Eventtype, trouble, maxseverity)
+		fmt.Printf("Summary: %s\n", tr)
+		////fmt.Printf("%s to %s. Trouble=%t Max severity=%d\n", firstevent.Eventtype, lastevent.Eventtype, trouble, maxseverity)
 	}
 	_, err = db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
 
@@ -94,8 +185,9 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		//  We do this one at a time because there might be other summarizers running.
 		row := db.QueryRow("SELECT tripid, stamp FROM tripstodo WHERE TIMESTAMPDIFF(SECOND, stamp, NOW()) > ? ORDER BY stamp LIMIT 1", minSummarizeSecs)
 		var tripid string // trip ID to be processed
-		var stampstr string
-		err := row.Scan(&tripid, &stampstr)
+		////var stampstr string
+		var stamp time.Time
+		err := row.Scan(&tripid, &stamp)
 		if err == sql.ErrNoRows {
 			if verbose {
 				fmt.Printf("Done.\n")
@@ -108,10 +200,10 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		if err != nil {
 			return err
 		}
-		stamp, err := time.Parse(Format3339Nano, stampstr)
-		if err != nil {
-			return err
-		}
+		////stamp, err := time.Parse(Format3339Nano, stampstr)
+		////if err != nil {
+		////	return err
+		////}
 		err = doonetripid(db, tripid, stamp, verbose)
 		if err != nil {
 			return err

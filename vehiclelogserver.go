@@ -26,14 +26,15 @@ var configloc string = "~/keys/vehicledbconf.json"
 //
 func initdb(cfile string, sv *FastCGIServer) error {
 	//  Read the config file into the server object
+	const mysqloptions = "parseTime=true" // makes TIMESTAMP -> time.Time conversions work
 	var err error
 	sv.config, err = readconfig(cfile)
 	if err != nil {
 		return err
 	}
 	//  Set database parameters (does not actually do an open in Go, so it won't fail)
-	s := fmt.Sprintf("%s:%s@tcp(%s)/%s",
-		sv.config.Mysql.User, sv.config.Mysql.Password, sv.config.Mysql.Domain, sv.config.Mysql.Database)
+	s := fmt.Sprintf("%s:%s@tcp(%s)/%s?%s",
+		sv.config.Mysql.User, sv.config.Mysql.Password, sv.config.Mysql.Domain, sv.config.Mysql.Database, mysqloptions)
 	sv.db, err = sql.Open("mysql", s)
 	if err != nil {
 		return err

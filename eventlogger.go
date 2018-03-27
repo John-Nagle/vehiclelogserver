@@ -21,6 +21,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"os/user"
 	"path/filepath"
@@ -50,6 +51,32 @@ type slregion struct { // region corners, always integer meters
 
 func (r slregion) String() string {
 	return fmt.Sprintf("%s (%d,%d)", r.Name, r.X, r.Y)
+}
+
+type slglobalpos struct {
+	X float64
+	Y float64
+}
+
+func (r *slglobalpos) Set(region slregion, pos slvector) {
+	r.X = float64(region.X) + float64(pos.X) // region corner plus local offset
+	r.Y = float64(region.Y) + float64(pos.Y)
+}
+
+func (r *slglobalpos) Min(t slglobalpos) {
+	r.X = math.Min(r.X, t.X)
+	r.Y = math.Min(r.X, t.X)
+}
+
+func (r *slglobalpos) Max(t slglobalpos) {
+	r.X = math.Max(r.X, t.X)
+	r.Y = math.Max(r.X, t.X)
+}
+
+func (r *slglobalpos) Distance(t slglobalpos) float64 {
+	dx := r.X - t.X
+	dy := r.Y - t.Y
+	return math.Sqrt(dx*dx + dy*dy) // distance, of course
 }
 
 //  Typical header data from SL servers
