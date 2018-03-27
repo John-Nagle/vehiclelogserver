@@ -18,7 +18,7 @@ import (
 //  Constants
 //
 const runEverySecs = 30      // run this no more than once per N seconds
-const minSummarizeSecs = 5   ////120                 // summarize if oldest event is older than this ***TEMP***
+const minSummarizeSecs = 120 // summarize if oldest event is older than this 
 const keeplasteventtypes = 6 // keep this many event types in log
 
 //
@@ -31,9 +31,9 @@ var lastSummarizeTime time.Time // last time we ran summarization. Zero at init
 //
 type trip struct { // used during summarization
 	serial         int32       // record serial number
-	eventtype      string      // type of event
 	prevpos        slglobalpos // global position
 	event_distance float64     // distance computed from events as check
+	starttime      int64       // starting time, UNIX
 	sx             tripsummary // trip summary to go to database
 }
 type tripsummary struct {
@@ -174,6 +174,7 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 		r.sx.regions_crossed = 0
 		r.event_distance = 0.0
 		r.serial = -1
+		r.starttime = event.Timestamp                             // start time
 		r.sx.tripid = event.Tripid
 		r.sx.severity = event.Severity
 		r.sx.start_region_name = hdr.Region.Name
@@ -261,6 +262,8 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 	if len(tr.sx.last_eventtypes) > keeplasteventtypes {
 		tr.sx.last_eventtypes = tr.sx.last_eventtypes[len(tr.sx.last_eventtypes)-keeplasteventtypes:] // keep last N
 	}
+	tr.sx.elapsed = int32(lastevent.Timestamp - tr.starttime)  // elapsed time
+	tr.sx.stamp = stamp                                         // timestamp trip (end time)
 	if verbose {
 		fmt.Printf("Summary: %s\n", tr)
 	}
@@ -305,9 +308,7 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Starting sleep.\n")
-		////time.Sleep(500 * time.Millisecond) // avoid overloading server
-		fmt.Printf("Ending sleep.\n")
+		time.Sleep(500 * time.Millisecond) // avoid overloading server
 	}
 	return nil // normal end
 }
