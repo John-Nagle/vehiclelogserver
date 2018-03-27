@@ -20,18 +20,23 @@ import (
 const runEverySecs = 30    // run this no more than once per N seconds
 const minSummarizeSecs = 5 ////120                 // summarize if oldest event is older than this ***TEMP***
 //
+//  Static variables
+//
+var lastSummarizeTime time.Time // last time we ran summarization. Zero at init
+
+//
 //  Types
 //
-type trip struct {
+type trip struct { // used during summarization
 	serial         int32       // record serial number
 	eventtype      string      // type of event
 	prevpos        slglobalpos // global position
 	event_distance float64     // distance computed from events as check
-	sx  tripsummary         // trip summary to go to database
-}	
+	sx             tripsummary // trip summary to go to database
+}
 type tripsummary struct {
 
-	// trip summary data
+	// trip summary data to go to database
 	stamp               time.Time   // end time of trip
 	elapsed             int32       // elapsed time
 	tripid              string      // ID of trip
@@ -67,8 +72,8 @@ func (r trip) String() string {
 }
 
 //
-//  update trip object given a log entry
-
+//  updatefromeevent -- update trip object given a log entry
+//
 func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 	var gpos slglobalpos
 	gpos.Set(hdr.Region, hdr.Local_position) // where we are
@@ -110,6 +115,11 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 		r.sx.data_status = "MISSING"
 	}
 	r.serial = event.Serial
+	//  Significant bad event?
+	trouble := strings.Contains(event.Eventtype, "FAIL") || strings.Contains(event.Eventtype, "ERR")
+	if trouble && r.sx.trip_status == "OK" {
+		r.sx.trip_status = "FAULT"
+	}
 	//  Distance calc
 	if hdr.Region.Name != r.sx.end_region_name { // region crossing
 		r.sx.regions_crossed++ // tally
@@ -117,15 +127,10 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 	r.sx.end_region_name = hdr.Region.Name
 	r.sx.min_pos.Min(gpos) // update corners of area traveled
 	r.sx.max_pos.Max(gpos)
-	r.event_distance += r.prevpos.Distance(gpos)                   // accumulate distance
-	r.prevpos = gpos                                               // previous position
+	r.event_distance += r.prevpos.Distance(gpos)                         // accumulate distance
+	r.prevpos = gpos                                                     // previous position
 	r.sx.last_eventtypes = append(r.sx.last_eventtypes, event.Eventtype) // recent event types (could truncate this)
 }
-
-//
-//  Static variables
-//
-var lastSummarizeTime time.Time // last time we ran summarization. Zero at init
 
 //
 //  doonetrpiid  -- handle one trip ID
@@ -143,8 +148,7 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 	var tr trip           // working trip
 	var first bool = true // first
 	var lastevent vehlogevent
-	var maxseverity int8 = 0 // highest severity seen
-	var trouble = false
+
 	for rows.Next() { // over all rows
 		var event vehlogevent
 		var hdr slheader
@@ -155,20 +159,20 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 			fmt.Printf("%4d. %12s %s %s %s %f\n", event.Serial, event.Eventtype, hdr.Region.Name, hdr.Local_position, event.Msg, event.Auxval)
 		}
 		tr.updatefromevent(event, hdr, first)
-		//  Save first and last events
+		//  Save last event
 		first = false
 		lastevent = event
-		if event.Severity > maxseverity {
-			maxseverity = event.Severity
-		}
-		trouble = trouble || strings.Contains(event.Eventtype, "FAIL") || strings.Contains(event.Eventtype, "ERR")
 	}
-	//  ***SUMMARIZE AND UPDATE***
-	trouble = trouble || lastevent.Eventtype != "SHUTDOWN" // if last is not shutdown, trouble
-	trouble = trouble || maxseverity > 1                   // if any anomalies
+	//  Last event processing
+	if lastevent.Eventtype == "SHUTDOWN" {
+		tr.sx.distance = float64(lastevent.Auxval) // get distance traveled
+	} else {
+		if tr.sx.trip_status == "OK" {
+			tr.sx.trip_status = "NOSHUTDOWN" // log ended incomplete
+		}
+	}
 	if verbose {
 		fmt.Printf("Summary: %s\n", tr)
-		////fmt.Printf("%s to %s. Trouble=%t Max severity=%d\n", firstevent.Eventtype, lastevent.Eventtype, trouble, maxseverity)
 	}
 	_, err = db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
 
