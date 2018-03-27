@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS trips (
     elapsed         INT NOT NULL,               -- elapsed time
     tripid          CHAR(40) NOT NULL,          -- ID of trip
     owner_name      VARCHAR(255) NOT NULL,      -- name of owner
-    grid_name       VARCHAR(255) NOT NULL,      -- grid name
+    shard          VARCHAR(255) NOT NULL,       -- grid name
 	object_name     VARCHAR(255) NOT NULL,      -- object name
 	driver_key      CHAR(36) NOT NULL,          -- driver avatar key if available
 	driver_name     VARCHAR(255) NOT NULL,      -- name of driver
@@ -74,10 +74,10 @@ CREATE TABLE IF NOT EXISTS trips (
 	severity        TINYINT NOT NULL,           -- worst severity level 
 	start_region_name VARCHAR(255) NOT NULL,    -- starting region
 	end_region_name VARCHAR(255) NOT NULL,      -- ending region
-	min_x           FLOAT NOT NULL,             -- min X value, global
-	min_y           FLOAT NOT NULL,             -- min Y value, global
-	max_x           FLOAT NOT NULL,             -- max X value, global
-    max_y           FLOAT NOT NULL,             -- max Y value, global
+	min_pos_x       FLOAT NOT NULL,             -- min X value, global
+	min_pos_y       FLOAT NOT NULL,             -- min Y value, global
+	max_pos_x       FLOAT NOT NULL,             -- max X value, global
+    max_pos_y       FLOAT NOT NULL,             -- max Y value, global
     last_eventtypes TEXT,                       -- last N event types recorded
 	msg             TEXT,                       -- message if any
 	INDEX(driver_name),

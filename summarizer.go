@@ -8,7 +8,7 @@ package main
 
 import (
 	"database/sql"
-	////"errors"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -62,7 +62,8 @@ type tripsummary struct {
 }
 
 func (r tripsummary) String() string {
-	return fmt.Sprintf("driver_name: \"%s\"  object_name: \"%s\"  status: %s  data: %s  regions: %d",
+	return fmt.Sprintf("tripid: \"%s\"  driver_name: \"%s\"  object_name: \"%s\"  status: %s  data: %s  regions: %d",
+		r.tripid,
 		r.driver_name, r.object_name,
 		r.trip_status, r.data_status,
 		r.regions_crossed)
@@ -81,7 +82,7 @@ func (r trip) String() string {
 //
 func inserttrip(db *sql.DB, r tripsummary) error {
 	//   Convert last eventtypes into TYPE-TYPE-TYPE for SQL
-	const insstmt string = "INSERT IGNORE INTO trips (stamp, elapsed, tripid, owner_name, shard, object_name, driver_key, driver_name, driver_display_name, distance, regions_crossed, trip_status, data_status, severity, start_region_name, end_region_name, min_pos_x, min_pos_y, max_pos_x, max_pos_y, last_eventtypes, msg) VALUES (? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?)"
+	const insstmt string = "INSERT IGNORE INTO trips (stamp, elapsed, tripid, owner_name, shard, object_name, driver_key, driver_name, driver_display_name, distance, regions_crossed, trip_status, data_status, severity, start_region_name, end_region_name, min_pos_x, min_pos_y, max_pos_x, max_pos_y, last_eventtypes, msg) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err := db.Exec(insstmt,
 		r.stamp,
 		r.elapsed,
@@ -103,7 +104,7 @@ func inserttrip(db *sql.DB, r tripsummary) error {
 		r.min_pos.Y,
 		r.max_pos.X,
 		r.max_pos.Y,
-		strings.Join(r.last_eventtypes, ",  "),
+		strings.Join(r.last_eventtypes, ", "),
 		r.msg)
 	return err
 }
@@ -112,6 +113,9 @@ func inserttrip(db *sql.DB, r tripsummary) error {
 //  deletetodo  -- delete to-do entry from to-do list
 //
 func deletetodo(db *sql.DB, tripid string) error {
+	if tripid == "" {
+		return (errors.New("deletetodo: empty tripid"))
+	}
 	_, err := db.Exec("DELETE FROM tripstodo WHERE tripid = ?", tripid)
 	return (err)
 }
@@ -170,6 +174,7 @@ func (r *trip) updatefromevent(event vehlogevent, hdr slheader, first bool) {
 		r.sx.regions_crossed = 0
 		r.event_distance = 0.0
 		r.serial = -1
+		r.sx.tripid = event.Tripid
 		r.sx.severity = event.Severity
 		r.sx.start_region_name = hdr.Region.Name
 		r.sx.min_pos = gpos // update corners of area traveled
@@ -222,7 +227,7 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 		fmt.Printf("Summarizing trip %s (%s)\n", tripid, stamp)
 	}
 	//  Read events for this trip in serial order
-	rows, err := db.Query("SELECT time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, local_position_z, severity, eventtype, msg, auxval, serial FROM events WHERE tripid = ? ORDER BY serial", tripid)
+	rows, err := db.Query("SELECT tripid, time, shard, owner_name, object_name, region_name, region_corner_x, region_corner_y, local_position_x, local_position_y, local_position_z, severity, eventtype, msg, auxval, serial FROM events WHERE tripid = ? ORDER BY serial", tripid)
 	if err != nil {
 		return err
 	}
@@ -234,7 +239,7 @@ func doonetripid(db *sql.DB, tripid string, stamp time.Time, verbose bool) error
 	for rows.Next() { // over all rows
 		var event vehlogevent
 		var hdr slheader
-		err = rows.Scan(&event.Timestamp, &hdr.Shard, &hdr.Owner_name, &hdr.Object_name, &hdr.Region.Name, &hdr.Region.X, &hdr.Region.Y,
+		err = rows.Scan(&event.Tripid, &event.Timestamp, &hdr.Shard, &hdr.Owner_name, &hdr.Object_name, &hdr.Region.Name, &hdr.Region.X, &hdr.Region.Y,
 			&hdr.Local_position.X, &hdr.Local_position.Y, &hdr.Local_position.Z,
 			&event.Severity, &event.Eventtype, &event.Msg, &event.Auxval, &event.Serial)
 		if verbose {
@@ -300,7 +305,9 @@ func dosummarize(db *sql.DB, verbose bool) error {
 		if err != nil {
 			return err
 		}
-		time.Sleep(500 * time.Millisecond) // avoid overloading server
+		fmt.Printf("Starting sleep.\n")
+		////time.Sleep(500 * time.Millisecond) // avoid overloading server
+		fmt.Printf("Ending sleep.\n")
 	}
 	return nil // normal end
 }

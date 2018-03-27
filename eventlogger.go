@@ -65,12 +65,12 @@ func (r *slglobalpos) Set(region slregion, pos slvector) {
 
 func (r *slglobalpos) Min(t slglobalpos) {
 	r.X = math.Min(r.X, t.X)
-	r.Y = math.Min(r.X, t.X)
+	r.Y = math.Min(r.Y, t.Y)
 }
 
 func (r *slglobalpos) Max(t slglobalpos) {
 	r.X = math.Max(r.X, t.X)
-	r.Y = math.Max(r.X, t.X)
+	r.Y = math.Max(r.Y, t.Y)
 }
 
 func (r *slglobalpos) Distance(t slglobalpos) float64 {
