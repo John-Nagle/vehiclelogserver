@@ -239,7 +239,7 @@ func TestEventLogFromFile(t *testing.T) {
 }
 
 func TestSummarize(t *testing.T) {
-	err := dosummarize(testsv.db, true)
+	err := dosummarize(testsv.db, false)
 	if err != nil {
 		t.Errorf(err.Error())
 		return

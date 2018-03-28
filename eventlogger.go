@@ -342,10 +342,13 @@ func Addevent(bodycontent []byte, headervars http.Header, config vdbconfig, db *
 //  Handlerequest -- handle a request from a client
 func Handlerequest(sv FastCGIServer, w http.ResponseWriter, bodycontent []byte, req *http.Request) {
 	err := Addevent(bodycontent, req.Header, sv.config, sv.db)
+	if err == nil {
+	    err = dosummarize(sv.db, false)             // do summarization
+	}
 	if err != nil {
 		w.WriteHeader(500)           // internal server error
 		w.Write([]byte(err.Error())) // report error as text ***TEMP***
 		w.Write([]byte("\n"))
-		dumprequest(sv, w, req, bodycontent) // dump entire request as text ***TEMP***
+		////dumprequest(sv, w, req, bodycontent) // dump entire request as text ***TEMP***
 	}
 }
